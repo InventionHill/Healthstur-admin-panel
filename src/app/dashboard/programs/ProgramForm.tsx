@@ -3,37 +3,12 @@
 import { useState, useEffect } from 'react';
 import { Upload, Trash2, Edit2, Plus } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
+import { DynamicIcon } from '@/components/DynamicIcon';
 import axios from '@/lib/axios';
 import { useRouter } from 'next/navigation';
+import { COMMON_ICONS } from '@/lib/constants';
 
-const COMMON_ICONS = [
-    'Activity', 'Airplay', 'AlertCircle', 'AlertOctagon', 'AlertTriangle', 'AlignCenter', 'AlignJustify', 'AlignLeft', 'AlignRight',
-    'Anchor', 'Aperture', 'Archive', 'ArrowDownCircle', 'ArrowDownLeft', 'ArrowDownRight', 'ArrowDown', 'ArrowLeftCircle', 'ArrowLeft',
-    'ArrowRightCircle', 'ArrowRight', 'ArrowUpCircle', 'ArrowUpLeft', 'ArrowUpRight', 'ArrowUp', 'AtSign', 'Award', 'BarChart2',
-    'BarChart', 'BatteryCharging', 'Battery', 'BellOff', 'Bell', 'Bluetooth', 'Bold', 'BookOpen', 'Book', 'Bookmark', 'Box', 'Briefcase',
-    'Calendar', 'CameraOff', 'Camera', 'Cast', 'CheckCircle', 'CheckSquare', 'Check', 'ChevronDown', 'ChevronLeft', 'ChevronRight',
-    'ChevronUp', 'ChevronsDown', 'ChevronsLeft', 'ChevronsRight', 'ChevronsUp', 'Chrome', 'Circle', 'Clipboard', 'Clock', 'CloudDrizzle',
-    'CloudLightning', 'CloudOff', 'CloudRain', 'CloudSnow', 'Cloud', 'Code', 'Codepen', 'Codesandbox', 'Coffee', 'Columns', 'Command',
-    'Compass', 'Copy', 'CornerDownLeft', 'CornerDownRight', 'CornerLeftDown', 'CornerLeftUp', 'CornerRightDown', 'CornerRightUp',
-    'CornerUpLeft', 'CornerUpRight', 'Cpu', 'CreditCard', 'Crop', 'Crosshair', 'Database', 'Delete', 'Disc', 'DivideCircle', 'DivideSquare',
-    'Divide', 'DollarSign', 'DownloadCloud', 'Download', 'Dribbble', 'Droplet', 'Edit2', 'Edit3', 'Edit', 'ExternalLink', 'EyeOff', 'Eye',
-    'Facebook', 'FastForward', 'Feather', 'Figma', 'FileMinus', 'FilePlus', 'FileText', 'File', 'Film', 'Filter', 'Flag', 'FolderMinus',
-    'FolderPlus', 'Folder', 'Framer', 'Frown', 'Gift', 'GitBranch', 'GitCommit', 'GitMerge', 'GitPullRequest', 'Github', 'Gitlab', 'Globe',
-    'Grid', 'HardDrive', 'Hash', 'Headphones', 'Heart', 'HelpCircle', 'Hexagon', 'Home', 'Image', 'Inbox', 'Info', 'Instagram', 'Italic',
-    'Key', 'Layers', 'Layout', 'LifeBuoy', 'Link2', 'Link', 'Linkedin', 'List', 'Loader', 'Lock', 'LogIn', 'LogOut', 'Mail', 'MapPin',
-    'Map', 'Maximize2', 'Maximize', 'Meh', 'Menu', 'MessageCircle', 'MessageSquare', 'MicOff', 'Mic', 'Minimize2', 'Minimize', 'MinusCircle',
-    'MinusSquare', 'Minus', 'Monitor', 'Moon', 'MoreHorizontal', 'MoreVertical', 'MousePointer', 'Move', 'Music', 'Navigation2', 'Navigation',
-    'Octagon', 'Package', 'Paperclip', 'PauseCircle', 'Pause', 'PenTool', 'Percent', 'PhoneCall', 'PhoneForwarded', 'PhoneIncoming',
-    'PhoneMissed', 'PhoneOff', 'PhoneOutgoing', 'Phone', 'PieChart', 'PlayCircle', 'Play', 'PlusCircle', 'PlusSquare', 'Plus', 'Pocket',
-    'Power', 'Printer', 'Radio', 'RefreshCcw', 'RefreshCw', 'Repeat', 'Rewind', 'RotateCcw', 'RotateCw', 'Rss', 'Save', 'Scissors', 'Search',
-    'Send', 'Server', 'Settings', 'Share2', 'Share', 'ShieldOff', 'Shield', 'ShoppingBag', 'ShoppingCart', 'Shuffle', 'Sidebar', 'SkipBack',
-    'SkipForward', 'Slack', 'Slash', 'Sliders', 'Smartphone', 'Smile', 'Speaker', 'Square', 'Star', 'StopCircle', 'Sun', 'Sunrise', 'Sunset',
-    'Tablet', 'Tag', 'Target', 'Terminal', 'Thermometer', 'ThumbsDown', 'ThumbsUp', 'ToggleLeft', 'ToggleRight', 'Tool', 'Trash2', 'Trash',
-    'Trello', 'TrendingDown', 'TrendingUp', 'Triangle', 'Truck', 'Tv', 'Twitch', 'Twitter', 'Type', 'Umbrella', 'Underline', 'Unlock',
-    'UploadCloud', 'Upload', 'UserCheck', 'UserMinus', 'UserPlus', 'UserX', 'User', 'Users', 'VideoOff', 'Video', 'Voicemail', 'Volume1',
-    'Volume2', 'VolumeX', 'Volume', 'Watch', 'WifiOff', 'Wifi', 'Wind', 'XCircle', 'XOctagon', 'XSquare', 'X', 'Youtube', 'ZapOff', 'Zap',
-    'ZoomIn', 'ZoomOut', 'Apple', 'Dumbbell', 'Salad'
-];
+
 
 interface Solution {
     id: string;
@@ -42,6 +17,7 @@ interface Solution {
     approach: string;
     benefits: string;
     image: string;
+    isActive?: boolean;
 }
 
 interface Program {
@@ -60,6 +36,8 @@ interface Program {
     bullets: any;
     subItems: any;
     solutions?: Solution[];
+    isActive?: boolean;
+    iconColor?: string;
 }
 
 export default function ProgramForm({ initialData }: { initialData?: Program }) {
@@ -83,6 +61,8 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
         solutionsSubtext: initialData?.solutionsSubtext || '',
         bullets: Array.isArray(initialData?.bullets) && initialData.bullets.length > 0 ? initialData.bullets : [''],
         subItems: initialData?.subItems ? JSON.stringify(initialData.subItems, null, 2) : '[]',
+        isActive: initialData?.isActive ?? true,
+        iconColor: initialData?.iconColor || '#023051',
     });
 
     const [isManualSlug, setIsManualSlug] = useState(!!initialData);
@@ -92,9 +72,14 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
         : [];
 
     const [solutionsList, setSolutionsList] = useState<Solution[]>(safeInitialSolutions as Solution[]);
-    const [currentSolution, setCurrentSolution] = useState<Solution>({ id: '', title: '', description: '', approach: '', benefits: '', image: '' });
+    const [currentSolution, setCurrentSolution] = useState<Solution>({ id: '', title: '', description: '', approach: '', benefits: '', image: '', isActive: true });
     const [isUploadingSolutionImage, setIsUploadingSolutionImage] = useState(false);
     const [isEditingSolution, setIsEditingSolution] = useState(false);
+
+    const [isIconDropdownOpen, setIsIconDropdownOpen] = useState(false);
+    const [iconSearchQuery, setIconSearchQuery] = useState('');
+    const [draggedBulletIndex, setDraggedBulletIndex] = useState<number | null>(null);
+    const [draggedSolutionIndex, setDraggedSolutionIndex] = useState<number | null>(null);
 
     useEffect(() => {
         if (!isManualSlug && formData.name) {
@@ -110,6 +95,30 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setApiError(null);
+
+        // Validation
+        if (!formData.name.trim()) return setApiError('Program Title is required.');
+        if (!formData.href.trim()) return setApiError('URL Slug is required.');
+        if (!formData.icon) return setApiError('Navbar Icon is required.');
+
+        // Home Page Hero Validation
+        if (!formData.homeHeading.trim()) return setApiError('Home Hero Heading is required.');
+        if (!formData.homeSubtext.trim()) return setApiError('Home Hero Subtext is required.');
+        if (!formData.homeBackground) return setApiError('Home Hero Background Image is required. Please upload an image.');
+
+        // Bullets Validation
+        const validBullets = formData.bullets.filter((b: string) => b.trim() !== '');
+        if (validBullets.length === 0) return setApiError('At least one valid Benefit Bullet is required.');
+
+        // Program Page Hero Validation
+        if (!formData.heading.trim()) return setApiError('Program Hero Heading is required.');
+        if (!formData.subtext.trim()) return setApiError('Program Hero Subtext is required.');
+        if (!formData.background) return setApiError('Program Hero Background Image is required. Please upload an image.');
+
+        // Solutions Validation
+        if (!formData.solutionsHeading.trim()) return setApiError('Solutions Section Title is required.');
+        if (!formData.solutionsSubtext.trim()) return setApiError('Solutions Section Subtext is required.');
+        if (solutionsList.length === 0) return setApiError('At least one Program Solution is required. Please add a solution in the Program Solutions tab.');
 
         try {
             let parsedSubItems = [];
@@ -130,9 +139,11 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                 homeBackground: formData.homeBackground,
                 solutionsHeading: formData.solutionsHeading,
                 solutionsSubtext: formData.solutionsSubtext,
-                bullets: formData.bullets,
+                bullets: validBullets,
                 subItems: parsedSubItems,
                 solutions: solutionsList,
+                isActive: formData.isActive,
+                iconColor: formData.iconColor,
             };
 
             if (initialData?.id) {
@@ -207,14 +218,19 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
     };
 
     const handleAddOrUpdateSolution = () => {
-        if (!currentSolution.title) return alert('Title is required');
+        if (!currentSolution.title.trim()) return alert('Title is required');
+        if (!currentSolution.description.trim()) return alert('Description is required');
+        if (!currentSolution.approach.trim()) return alert('Approach is required');
+        if (!currentSolution.benefits.trim()) return alert('Benefits is required');
+        if (!currentSolution.image) return alert('Solution Image is required');
+
         if (isEditingSolution && currentSolution.id) {
             setSolutionsList(prev => prev.map(s => s.id === currentSolution.id ? currentSolution : s));
         } else {
             const newSolution = { ...currentSolution, id: Date.now().toString() };
             setSolutionsList(prev => [...prev, newSolution]);
         }
-        setCurrentSolution({ id: '', title: '', description: '', approach: '', benefits: '', image: '' });
+        setCurrentSolution({ id: '', title: '', description: '', approach: '', benefits: '', image: '', isActive: true });
         setIsEditingSolution(false);
     };
 
@@ -237,16 +253,30 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
             )}
 
             {/* General Info */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Program Title (Name)</label>
-                    <input
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">Used in Navbar & Breadcrumbs</p>
+                    <div className="flex items-center gap-4">
+                        <input
+                            required
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white"
+                        />
+                        <label className="flex items-center gap-2 cursor-pointer select-none shrink-0 py-2 border border-gray-200 px-3 rounded-lg bg-gray-50">
+                            <span className="text-sm font-medium text-gray-700">Active</span>
+                            <div className="relative">
+                                <input
+                                    type="checkbox"
+                                    className="sr-only peer"
+                                    checked={formData.isActive}
+                                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                                />
+                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                            </div>
+                        </label>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">Used in Navbar & Breadcrumbs. Uncheck to hide this program.</p>
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">URL Slug</label>
@@ -261,28 +291,104 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                     />
                     <p className="text-xs text-gray-500 mt-1">Auto-generates from title unless edited.</p>
                 </div>
-                <div>
+                <div className="relative">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Navbar Icon</label>
                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                            {(() => {
-                                const Icon = (LucideIcons as any)[formData.icon || 'Activity'] || LucideIcons.Activity;
-                                return <Icon className="w-5 h-5" />;
-                            })()}
-                        </div>
-                        <select
-                            value={formData.icon}
-                            onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary appearance-none bg-white text-gray-900"
+                        <button
+                            type="button"
+                            onClick={() => setIsIconDropdownOpen(!isIconDropdownOpen)}
+                            className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-white text-gray-900 text-left flex items-center justify-between"
                         >
-                            <option value="">Select an Icon</option>
-                            {COMMON_ICONS.map((iconName) => (
-                                <option key={iconName} value={iconName}>
-                                    {iconName}
-                                </option>
-                            ))}
-                        </select>
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                <DynamicIcon name={formData.icon || 'Activity'} className="w-5 h-5" />
+                            </div>
+                            <span className="block truncate">{formData.icon || 'Select an Icon'}</span>
+                            <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                <LucideIcons.ChevronDown className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                            </span>
+                        </button>
+
+                        {isIconDropdownOpen && (
+                            <>
+                                <div className="fixed inset-0 z-10" onClick={() => setIsIconDropdownOpen(false)}></div>
+                                <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                                    <div className="px-2 pb-2 sticky top-0 bg-white z-30">
+                                        <input
+                                            type="text"
+                                            className="w-full border border-gray-300 rounded-md py-1.5 px-3 text-sm focus:outline-none focus:ring-primary focus:border-primary text-gray-900 bg-white placeholder-gray-400"
+                                            placeholder="Search icons..."
+                                            value={iconSearchQuery}
+                                            onChange={(e) => setIconSearchQuery(e.target.value)}
+                                            onClick={(e) => e.stopPropagation()}
+                                            autoFocus
+                                        />
+                                    </div>
+                                    <ul className="relative z-20">
+                                        <li
+                                            className={`cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-gray-50 ${!formData.icon ? 'bg-blue-50 text-blue-700' : 'text-gray-900'}`}
+                                            onClick={() => {
+                                                setFormData({ ...formData, icon: '' });
+                                                setIsIconDropdownOpen(false);
+                                                setIconSearchQuery('');
+                                            }}
+                                        >
+                                            <div className="flex items-center">
+                                                <span className="ml-3 block truncate font-normal">Select an Icon (Clear)</span>
+                                            </div>
+                                        </li>
+                                        {COMMON_ICONS.filter(icon => icon.toLowerCase().includes(iconSearchQuery.toLowerCase())).map((iconName) => {
+                                            const isSelected = formData.icon === iconName;
+                                            return (
+                                                <li
+                                                    key={iconName}
+                                                    className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-gray-50 ${isSelected ? 'bg-blue-50 text-blue-700' : 'text-gray-900'}`}
+                                                    onClick={() => {
+                                                        setFormData({ ...formData, icon: iconName });
+                                                        setIsIconDropdownOpen(false);
+                                                        setIconSearchQuery('');
+                                                    }}
+                                                >
+                                                    <div className="flex items-center">
+                                                        <DynamicIcon name={iconName} className="w-5 h-5 text-gray-500" />
+                                                        <span className={`ml-3 block truncate ${isSelected ? 'font-semibold' : 'font-normal'}`}>
+                                                            {iconName}
+                                                        </span>
+                                                    </div>
+                                                    {isSelected && (
+                                                        <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600">
+                                                            <LucideIcons.Check className="h-5 w-5" aria-hidden="true" />
+                                                        </span>
+                                                    )}
+                                                </li>
+                                            );
+                                        })}
+                                        {COMMON_ICONS.filter(icon => icon.toLowerCase().includes(iconSearchQuery.toLowerCase())).length === 0 && (
+                                            <li className="text-gray-500 text-sm text-center py-4">No icons found.</li>
+                                        )}
+                                    </ul>
+                                </div>
+                            </>
+                        )}
                     </div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Hover Color</label>
+                    <div className="flex items-center gap-3">
+                        <input
+                            type="color"
+                            value={formData.iconColor}
+                            onChange={(e) => setFormData({ ...formData, iconColor: e.target.value })}
+                            className="h-10 w-10 p-0 border border-gray-300 rounded-lg cursor-pointer bg-white overflow-hidden shrink-0"
+                            style={{ padding: '2px' }}
+                        />
+                        <input
+                            type="text"
+                            value={formData.iconColor}
+                            onChange={(e) => setFormData({ ...formData, iconColor: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white font-mono text-sm uppercase"
+                        />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">Navbar icon hover colour.</p>
                 </div>
             </div>
 
@@ -323,7 +429,33 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                         <label className="block text-sm font-medium text-gray-700 mb-2">Benefits Bullets</label>
                         <div className="space-y-3">
                             {formData.bullets.map((bullet: string, index: number) => (
-                                <div key={index} className="flex gap-2">
+                                <div
+                                    key={index}
+                                    className={`flex gap-2 items-center p-1 rounded-lg transition-colors border border-transparent ${draggedBulletIndex === index ? 'opacity-50 bg-gray-50 border-gray-200 border-dashed' : 'hover:bg-gray-50'}`}
+                                    draggable
+                                    onDragStart={(e) => {
+                                        setDraggedBulletIndex(index);
+                                        e.dataTransfer.effectAllowed = "move";
+                                    }}
+                                    onDragOver={(e) => {
+                                        e.preventDefault();
+                                        e.dataTransfer.dropEffect = "move";
+                                    }}
+                                    onDrop={(e) => {
+                                        e.preventDefault();
+                                        if (draggedBulletIndex === null || draggedBulletIndex === index) return;
+                                        const newBullets = [...formData.bullets];
+                                        const draggedItem = newBullets[draggedBulletIndex];
+                                        newBullets.splice(draggedBulletIndex, 1);
+                                        newBullets.splice(index, 0, draggedItem);
+                                        setFormData({ ...formData, bullets: newBullets });
+                                        setDraggedBulletIndex(null);
+                                    }}
+                                    onDragEnd={() => setDraggedBulletIndex(null)}
+                                >
+                                    <div className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 px-1 py-2 flex items-center justify-center">
+                                        <LucideIcons.GripVertical className="w-5 h-5" />
+                                    </div>
                                     <input
                                         type="text"
                                         value={bullet}
@@ -447,19 +579,36 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                                     <textarea rows={2} value={currentSolution.benefits} onChange={e => setCurrentSolution(p => ({ ...p, benefits: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" />
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Solution Image</label>
-                                    <div className="flex items-center gap-3">
-                                        <label className="flex items-center justify-center px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-lg cursor-pointer transition-colors border border-gray-300 text-sm">
-                                            <Upload className="w-4 h-4 mr-2" />
-                                            {isUploadingSolutionImage ? 'Uploading...' : 'Upload Image'}
-                                            <input type="file" className="hidden" accept="image/*" onChange={handleSolutionImageUpload} disabled={isUploadingSolutionImage} />
-                                        </label>
-                                        {currentSolution.image && (
-                                            <div className="w-12 h-16 rounded overflow-hidden border border-gray-200">
-                                                <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${currentSolution.image}`} alt="Preview" className="w-full h-full object-cover" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Solution Image</label>
+                                        <div className="flex items-center gap-3">
+                                            <label className="flex items-center justify-center px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-lg cursor-pointer transition-colors border border-gray-300 text-sm">
+                                                <Upload className="w-4 h-4 mr-2" />
+                                                {isUploadingSolutionImage ? 'Uploading...' : 'Upload Image'}
+                                                <input type="file" className="hidden" accept="image/*" onChange={handleSolutionImageUpload} disabled={isUploadingSolutionImage} />
+                                            </label>
+                                            {currentSolution.image && (
+                                                <div className="w-12 h-16 rounded overflow-hidden border border-gray-200">
+                                                    <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${currentSolution.image}`} alt="Preview" className="w-full h-full object-cover" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                        <label className="inline-flex items-center gap-2 cursor-pointer select-none py-2 border border-gray-200 px-3 rounded-lg bg-white h-10 w-full sm:w-auto">
+                                            <span className="text-sm font-medium text-gray-700">Active</span>
+                                            <div className="relative mt-0.5">
+                                                <input
+                                                    type="checkbox"
+                                                    className="sr-only peer"
+                                                    checked={currentSolution.isActive ?? true}
+                                                    onChange={(e) => setCurrentSolution(p => ({ ...p, isActive: e.target.checked }))}
+                                                />
+                                                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-500"></div>
                                             </div>
-                                        )}
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -480,16 +629,49 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                         {solutionsList.length === 0 ? (
                             <p className="text-sm text-gray-500 italic">No solutions added yet. Use the form above to add.</p>
                         ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {solutionsList.map((sol) => (
-                                    <div key={sol.id} className="bg-white border border-gray-200 p-4 rounded-lg flex gap-4">
+                            <div className="grid grid-cols-1 gap-4">
+                                {solutionsList.map((sol, index) => (
+                                    <div
+                                        key={sol.id}
+                                        className={`bg-white border p-4 rounded-lg flex gap-4 transition-colors ${draggedSolutionIndex === index ? 'opacity-50 border-gray-400 border-dashed bg-gray-50' : 'border-gray-200 hover:border-gray-300'}`}
+                                        draggable
+                                        onDragStart={(e) => {
+                                            setDraggedSolutionIndex(index);
+                                            e.dataTransfer.effectAllowed = "move";
+                                        }}
+                                        onDragOver={(e) => {
+                                            e.preventDefault();
+                                            e.dataTransfer.dropEffect = "move";
+                                        }}
+                                        onDrop={(e) => {
+                                            e.preventDefault();
+                                            if (draggedSolutionIndex === null || draggedSolutionIndex === index) return;
+                                            const newSolutions = [...solutionsList];
+                                            const draggedItem = newSolutions[draggedSolutionIndex];
+                                            newSolutions.splice(draggedSolutionIndex, 1);
+                                            newSolutions.splice(index, 0, draggedItem);
+                                            setSolutionsList(newSolutions);
+                                            setDraggedSolutionIndex(null);
+                                        }}
+                                        onDragEnd={() => setDraggedSolutionIndex(null)}
+                                    >
+                                        <div className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 flex items-center justify-center -ml-2">
+                                            <LucideIcons.GripVertical className="w-5 h-5" />
+                                        </div>
                                         {sol.image && (
                                             <div className="w-16 h-20 flex-shrink-0 bg-gray-100 rounded overflow-hidden shadow-sm">
                                                 <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${sol.image}`} className="w-full h-full object-cover" alt="" />
                                             </div>
                                         )}
                                         <div className="flex-1 min-w-0">
-                                            <h4 className="font-semibold text-gray-900 truncate">{sol.title}</h4>
+                                            <div className="flex items-center gap-2">
+                                                <h4 className="font-semibold text-gray-900 truncate">{sol.title}</h4>
+                                                {(sol.isActive ?? true) ? (
+                                                    <span className="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-green-100 text-green-700">Active</span>
+                                                ) : (
+                                                    <span className="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">Inactive</span>
+                                                )}
+                                            </div>
                                             <p className="text-xs text-gray-500 line-clamp-2 mt-1">{sol.description}</p>
                                             <div className="flex items-center gap-4 mt-3">
                                                 <button type="button" onClick={() => handleEditSolution(sol)} className="text-xs font-medium text-blue-600 hover:text-blue-800 flex items-center gap-1">

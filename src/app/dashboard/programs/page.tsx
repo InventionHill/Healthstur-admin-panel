@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, GripVertical } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import axios from '@/lib/axios';
 import Link from 'next/link';
@@ -46,12 +46,16 @@ interface Program {
     background?: string;
     bullets: any;
     subItems: any;
+    isActive?: boolean;
 }
 
 export default function ProgramsPage() {
     const router = useRouter();
     const [programs, setPrograms] = useState<Program[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
+    const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
+    const [isSavingOrder, setIsSavingOrder] = useState(false);
 
 
 
@@ -87,6 +91,89 @@ export default function ProgramsPage() {
         }
     };
 
+    const handleToggleActive = async (program: Program) => {
+        try {
+            const newStatus = !(program.isActive ?? true);
+            // Optimistically update the UI
+            setPrograms(current => current.map(p => p.id === program.id ? { ...p, isActive: newStatus } : p));
+            // Send to backend
+            await axios.put(`/programs/${program.id}`, { ...program, isActive: newStatus });
+        } catch (error) {
+            console.error('Failed to toggle program status:', error);
+            fetchPrograms(); // Revert on failure
+        }
+    };
+
+    const handleDragStart = (e: React.DragEvent, id: string) => {
+        setDraggedItemId(id);
+        // Required for Firefox
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', id);
+        // Make the dragged ghost look semi-transparent
+        setTimeout(() => {
+            if (e.target instanceof HTMLElement) {
+                e.target.style.opacity = '0.5';
+            }
+        }, 0);
+    };
+
+    const handleDragOver = (e: React.DragEvent, id: string) => {
+        e.preventDefault(); // Necessary to allow dropping
+        e.dataTransfer.dropEffect = 'move';
+        if (id !== dragOverItemId) {
+            setDragOverItemId(id);
+        }
+    };
+
+    const handleDragLeave = () => {
+        setDragOverItemId(null);
+    };
+
+    const handleDragEnd = (e: React.DragEvent) => {
+        setDraggedItemId(null);
+        setDragOverItemId(null);
+        if (e.target instanceof HTMLElement) {
+            e.target.style.opacity = '1';
+        }
+    };
+
+    const handleDrop = async (e: React.DragEvent, targetId: string) => {
+        e.preventDefault();
+        setDragOverItemId(null);
+
+        if (!draggedItemId || draggedItemId === targetId) return;
+
+        const draggedIndex = programs.findIndex(p => p.id === draggedItemId);
+        const targetIndex = programs.findIndex(p => p.id === targetId);
+
+        if (draggedIndex === -1 || targetIndex === -1) return;
+
+        // Reorder array locally
+        const newPrograms = [...programs];
+        const [removedItem] = newPrograms.splice(draggedIndex, 1);
+        newPrograms.splice(targetIndex, 0, removedItem);
+
+        // Optimistically update state
+        setPrograms(newPrograms);
+        setIsSavingOrder(true);
+
+        try {
+            // Build payload of { id, order } for the backend
+            const payload = newPrograms.map((p, index) => ({
+                id: p.id,
+                order: index
+            }));
+
+            await axios.put('/programs/reorder', payload);
+        } catch (error) {
+            console.error('Failed to save new order:', error);
+            alert('Failed to save the new order. Refreshing.');
+            fetchPrograms(); // Revert on failure
+        } finally {
+            setIsSavingOrder(false);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -113,17 +200,47 @@ export default function ProgramsPage() {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-100">
+                                    <th className="px-6 py-4 text-sm font-semibold text-gray-900 w-10"></th>
                                     <th className="px-6 py-4 text-sm font-semibold text-gray-900">Name</th>
                                     <th className="px-6 py-4 text-sm font-semibold text-gray-900">Heading</th>
+                                    <th className="px-6 py-4 text-sm font-semibold text-gray-900">Status</th>
                                     <th className="px-6 py-4 text-sm font-semibold text-gray-900">Href</th>
                                     <th className="px-6 py-4 text-sm font-semibold text-gray-900 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className={`divide-y divide-gray-100 ${isSavingOrder ? 'opacity-50 pointer-events-none' : ''}`}>
                                 {programs.map((program) => (
-                                    <tr key={program.id} className="hover:bg-gray-50/50 transition-colors">
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{program.name}</td>
+                                    <tr
+                                        key={program.id}
+                                        draggable
+                                        onDragStart={(e) => handleDragStart(e, program.id)}
+                                        onDragOver={(e) => handleDragOver(e, program.id)}
+                                        onDragLeave={handleDragLeave}
+                                        onDrop={(e) => handleDrop(e, program.id)}
+                                        onDragEnd={handleDragEnd}
+                                        className={`transition-colors group ${dragOverItemId === program.id ? 'bg-blue-50 border-t-2 border-t-blue-500' : 'hover:bg-gray-50/50 bg-white'}`}
+                                    >
+                                        <td className="px-6 py-4 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 transition-colors">
+                                            <GripVertical className="w-5 h-5" />
+                                        </td>
+                                        <td className="px-6 py-4 text-sm font-medium text-gray-900 select-none">{program.name}</td>
                                         <td className="px-6 py-4 text-sm text-gray-500">{program.heading}</td>
+                                        <td className="px-6 py-4 text-sm">
+                                            <label className="inline-flex items-center cursor-pointer group">
+                                                <div className="relative flex items-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="sr-only peer"
+                                                        checked={program.isActive ?? true}
+                                                        onChange={() => handleToggleActive(program)}
+                                                    />
+                                                    <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500 transition-colors shadow-sm"></div>
+                                                </div>
+                                                <span className={`ml-3 text-sm font-medium transition-colors ${program.isActive ?? true ? 'text-emerald-600' : 'text-gray-400'}`}>
+                                                    {(program.isActive ?? true) ? 'Active' : 'Inactive'}
+                                                </span>
+                                            </label>
+                                        </td>
                                         <td className="px-6 py-4 text-sm text-gray-500">{program.href.replace(/^\/programs\//, '')}</td>
                                         <td className="px-6 py-4 text-sm text-right space-x-3">
 
