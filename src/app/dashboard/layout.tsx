@@ -55,6 +55,7 @@ export default function DashboardLayout({
     const navItems = [
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
         { name: 'Programs', href: '/dashboard/programs', icon: Dumbbell },
+        { name: 'Curated Tracks', href: '/dashboard/curated-tracks', icon: Activity },
         { name: 'Members', href: '/dashboard/members', icon: Users },
         { name: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
         { name: 'Billing', href: '/dashboard/billing', icon: CreditCard },
