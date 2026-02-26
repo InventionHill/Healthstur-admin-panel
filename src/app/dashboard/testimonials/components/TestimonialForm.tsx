@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from '@/lib/axios';
-import { Save, Loader2, Upload } from 'lucide-react';
+import { Save, Loader2, Upload, AlertCircle } from 'lucide-react';
 
 interface TestimonialFormProps {
     id?: string;
@@ -15,6 +15,7 @@ export default function TestimonialForm({ id }: TestimonialFormProps) {
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(isEditing);
     const [isUploadingImage, setIsUploadingImage] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -44,7 +45,7 @@ export default function TestimonialForm({ id }: TestimonialFormProps) {
             });
         } catch (error) {
             console.error('Failed to fetch Testimonial:', error);
-            alert('Failed to load Testimonial data');
+            setError('Failed to load Testimonial data');
         } finally {
             setInitialLoading(false);
         }
@@ -55,6 +56,7 @@ export default function TestimonialForm({ id }: TestimonialFormProps) {
         if (!file) return;
 
         try {
+            setError(null);
             setIsUploadingImage(true);
             const data = new FormData();
             data.append('file', file);
@@ -67,7 +69,7 @@ export default function TestimonialForm({ id }: TestimonialFormProps) {
             setFormData(prev => ({ ...prev, image: res.data.url }));
         } catch (error) {
             console.error('Error uploading file', error);
-            alert('Error uploading file');
+            setError('Error uploading file');
         } finally {
             setIsUploadingImage(false);
         }
@@ -75,6 +77,7 @@ export default function TestimonialForm({ id }: TestimonialFormProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError(null);
         setLoading(true);
 
         try {
@@ -90,9 +93,10 @@ export default function TestimonialForm({ id }: TestimonialFormProps) {
 
             router.push('/dashboard/testimonials');
             router.refresh();
-        } catch (error) {
-            console.error('Failed to save Testimonial:', error);
-            alert('Failed to save Testimonial. Please try again.');
+        } catch (err) {
+            console.error('Failed to save Testimonial:', err);
+            setError('Failed to save Testimonial. Please try again.');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
             setLoading(false);
         }
@@ -105,6 +109,15 @@ export default function TestimonialForm({ id }: TestimonialFormProps) {
     return (
         <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                {error && (
+                    <div className="mb-8 bg-red-50 border border-red-200 rounded-xl p-4 flex items-start shadow-sm">
+                        <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" />
+                        <div>
+                            <h3 className="text-sm font-semibold text-red-800">Action Required</h3>
+                            <p className="text-sm text-red-600 mt-1">{error}</p>
+                        </div>
+                    </div>
+                )}
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from '@/lib/axios';
-import { Save, Loader2 } from 'lucide-react';
+import { Save, Loader2, AlertCircle } from 'lucide-react';
 
 interface FaqFormProps {
     id?: string;
@@ -14,6 +14,7 @@ export default function FaqForm({ id }: FaqFormProps) {
     const isEditing = !!id;
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(isEditing);
+    const [error, setError] = useState<string | null>(null);
 
     const [formData, setFormData] = useState({
         question: '',
@@ -37,7 +38,7 @@ export default function FaqForm({ id }: FaqFormProps) {
             });
         } catch (error) {
             console.error('Failed to fetch FAQ:', error);
-            alert('Failed to load FAQ data');
+            setError('Failed to load FAQ data');
         } finally {
             setInitialLoading(false);
         }
@@ -45,6 +46,7 @@ export default function FaqForm({ id }: FaqFormProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError(null);
         setLoading(true);
 
         try {
@@ -60,9 +62,10 @@ export default function FaqForm({ id }: FaqFormProps) {
 
             router.push('/dashboard/faq');
             router.refresh(); // Refresh the list
-        } catch (error) {
-            console.error('Failed to save FAQ:', error);
-            alert('Failed to save FAQ. Please try again.');
+        } catch (err) {
+            console.error('Failed to save FAQ:', err);
+            setError('Failed to save FAQ. Please try again.');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
             setLoading(false);
         }
@@ -75,6 +78,15 @@ export default function FaqForm({ id }: FaqFormProps) {
     return (
         <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                {error && (
+                    <div className="mb-8 bg-red-50 border border-red-200 rounded-xl p-4 flex items-start shadow-sm">
+                        <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" />
+                        <div>
+                            <h3 className="text-sm font-semibold text-red-800">Action Required</h3>
+                            <p className="text-sm text-red-600 mt-1">{error}</p>
+                        </div>
+                    </div>
+                )}
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                         <label htmlFor="question" className="block text-sm font-medium text-gray-700 mb-2">

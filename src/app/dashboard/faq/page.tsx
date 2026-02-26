@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Plus, Edit2, Trash2, GripVertical } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import axios from '@/lib/axios';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 interface Faq {
     id: string;
@@ -21,6 +22,7 @@ export default function FAQList() {
     const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
     const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
     const [isSavingOrder, setIsSavingOrder] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
     const fetchFaqs = async () => {
         try {
@@ -37,14 +39,20 @@ export default function FAQList() {
         fetchFaqs();
     }, []);
 
-    const handleDelete = async (id: string) => {
-        if (!window.confirm('Are you sure you want to delete this FAQ?')) return;
+    const confirmDelete = async () => {
+        if (!itemToDelete) return;
         try {
-            await axios.delete(`/faq/${id}`);
+            await axios.delete(`/faq/${itemToDelete}`);
             fetchFaqs();
         } catch (error) {
             console.error('Failed to delete FAQ:', error);
+        } finally {
+            setItemToDelete(null);
         }
+    };
+
+    const handleDelete = (id: string) => {
+        setItemToDelete(id);
     };
 
     const handleToggleActive = async (faq: Faq) => {
@@ -205,6 +213,15 @@ export default function FAQList() {
                     </tbody>
                 </table>
             </div>
+
+            <ConfirmDialog
+                isOpen={!!itemToDelete}
+                onClose={() => setItemToDelete(null)}
+                onConfirm={confirmDelete}
+                title="Delete FAQ"
+                message="Are you sure you want to delete this FAQ? This action cannot be undone."
+                confirmText="Delete"
+            />
         </div>
     );
 }

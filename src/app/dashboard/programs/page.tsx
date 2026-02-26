@@ -6,6 +6,7 @@ import * as LucideIcons from 'lucide-react';
 import axios from '@/lib/axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 export const COMMON_ICONS = [
     'Activity', 'Airplay', 'AlertCircle', 'AlertOctagon', 'AlertTriangle', 'AlignCenter', 'AlignJustify', 'AlignLeft', 'AlignRight',
@@ -56,6 +57,7 @@ export default function ProgramsPage() {
     const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
     const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
     const [isSavingOrder, setIsSavingOrder] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
 
 
@@ -80,15 +82,20 @@ export default function ProgramsPage() {
 
 
 
-    const handleDelete = async (id: string) => {
-        if (confirm('Are you sure you want to delete this program?')) {
-            try {
-                await axios.delete(`/programs/${id}`);
-                fetchPrograms();
-            } catch (error) {
-                console.error('Failed to delete program:', error);
-            }
+    const confirmDelete = async () => {
+        if (!itemToDelete) return;
+        try {
+            await axios.delete(`/programs/${itemToDelete}`);
+            fetchPrograms();
+        } catch (error) {
+            console.error('Failed to delete program:', error);
+        } finally {
+            setItemToDelete(null);
         }
+    };
+
+    const handleDelete = (id: string) => {
+        setItemToDelete(id);
     };
 
     const handleToggleActive = async (program: Program) => {
@@ -265,7 +272,14 @@ export default function ProgramsPage() {
                 )}
             </div>
 
-
+            <ConfirmDialog
+                isOpen={!!itemToDelete}
+                onClose={() => setItemToDelete(null)}
+                onConfirm={confirmDelete}
+                title="Delete Program"
+                message="Are you sure you want to delete this program? This action cannot be undone."
+                confirmText="Delete"
+            />
         </div>
     );
 }

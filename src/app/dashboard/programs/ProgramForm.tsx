@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Upload, Trash2, Edit2, Plus } from 'lucide-react';
+import { Upload, Trash2, Edit2, Plus, AlertCircle } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { DynamicIcon } from '@/components/DynamicIcon';
 import axios from '@/lib/axios';
@@ -190,7 +190,8 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
 
         } catch (error) {
             console.error('Error uploading image', error);
-            alert('Error uploading image');
+            setApiError('Error uploading image');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
             if (isHomeImage) setIsUploadingHomeImage(false);
             else setIsUploading(false);
@@ -211,18 +212,20 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
             });
             setCurrentSolution(prev => ({ ...prev, image: res.data.url }));
         } catch (error) {
-            alert('Error uploading image');
+            setApiError('Error uploading image');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
             setIsUploadingSolutionImage(false);
         }
     };
 
     const handleAddOrUpdateSolution = () => {
-        if (!currentSolution.title.trim()) return alert('Title is required');
-        if (!currentSolution.description.trim()) return alert('Description is required');
-        if (!currentSolution.approach.trim()) return alert('Approach is required');
-        if (!currentSolution.benefits.trim()) return alert('Benefits is required');
-        if (!currentSolution.image) return alert('Solution Image is required');
+        setApiError(null);
+        if (!currentSolution.title.trim()) { setApiError('Title is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.description.trim()) { setApiError('Description is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.approach.trim()) { setApiError('Approach is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.benefits.trim()) { setApiError('Benefits is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.image) { setApiError('Solution Image is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
 
         if (isEditingSolution && currentSolution.id) {
             setSolutionsList(prev => prev.map(s => s.id === currentSolution.id ? currentSolution : s));
@@ -247,8 +250,12 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-6">
 
             {apiError && (
-                <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-                    <p className="text-red-700 text-sm font-medium">{apiError}</p>
+                <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-start shadow-sm">
+                    <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" />
+                    <div>
+                        <h3 className="text-sm font-semibold text-red-800">Action Required</h3>
+                        <p className="text-sm text-red-600 mt-1">{apiError}</p>
+                    </div>
                 </div>
             )}
 

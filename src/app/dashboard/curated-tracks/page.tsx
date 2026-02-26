@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, GripVertical } from 'lucide-react';
 import axios from '@/lib/axios';
 import Link from 'next/link';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 export interface CuratedTrack {
     id: string;
@@ -23,6 +24,7 @@ export default function CuratedTracksPage() {
     const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
     const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
     const [isSavingOrder, setIsSavingOrder] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
 
     const fetchTracks = async () => {
         try {
@@ -40,15 +42,20 @@ export default function CuratedTracksPage() {
         fetchTracks();
     }, []);
 
-    const handleDelete = async (id: string) => {
-        if (confirm('Are you sure you want to delete this track?')) {
-            try {
-                await axios.delete(`/curated-tracks/${id}`);
-                fetchTracks();
-            } catch (error) {
-                console.error('Failed to delete track:', error);
-            }
+    const confirmDelete = async () => {
+        if (!itemToDelete) return;
+        try {
+            await axios.delete(`/curated-tracks/${itemToDelete}`);
+            fetchTracks();
+        } catch (error) {
+            console.error('Failed to delete track:', error);
+        } finally {
+            setItemToDelete(null);
         }
+    };
+
+    const handleDelete = (id: string) => {
+        setItemToDelete(id);
     };
 
     const handleToggleActive = async (track: CuratedTrack) => {
@@ -219,6 +226,15 @@ export default function CuratedTracksPage() {
                     </div>
                 )}
             </div>
+
+            <ConfirmDialog
+                isOpen={!!itemToDelete}
+                onClose={() => setItemToDelete(null)}
+                onConfirm={confirmDelete}
+                title="Delete Track"
+                message="Are you sure you want to delete this curated track? This action cannot be undone."
+                confirmText="Delete"
+            />
         </div>
     );
 }

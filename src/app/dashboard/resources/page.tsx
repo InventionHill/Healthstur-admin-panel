@@ -2,70 +2,66 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Plus, Edit2, Trash2, GripVertical, Star } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Plus, Edit2, Trash2, GripVertical, FileText } from 'lucide-react';
 import axios from '@/lib/axios';
 import ConfirmDialog from '@/components/ConfirmDialog';
 
-interface Testimonial {
+interface Resource {
     id: string;
-    name: string;
-    role: string;
-    image: string | null;
-    quote: string;
-    stars: number;
+    title: string;
+    slug: string;
     isActive: boolean;
     order: number;
 }
 
-export default function TestimonialList() {
-    const router = useRouter();
-    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+export default function ResourceList() {
+    const [resources, setResources] = useState<Resource[]>([]);
     const [loading, setLoading] = useState(true);
     const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
     const [dragOverItemId, setDragOverItemId] = useState<string | null>(null);
     const [isSavingOrder, setIsSavingOrder] = useState(false);
-    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+    const [itemToDelete, setItemToDelete] = useState<Resource | null>(null);
 
-    const fetchTestimonials = async () => {
+    const fetchResources = async () => {
         try {
-            const response = await axios.get('/testimonial/admin');
-            setTestimonials(response.data);
+            const response = await axios.get('/resource/admin');
+            setResources(response.data);
         } catch (error) {
-            console.error('Failed to fetch Testimonials:', error);
+            console.error('Failed to fetch Resources:', error);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchTestimonials();
+        fetchResources();
     }, []);
 
     const confirmDelete = async () => {
         if (!itemToDelete) return;
         try {
-            await axios.delete(`/testimonial/${itemToDelete}`);
-            fetchTestimonials();
+            await axios.delete(`/resource/${itemToDelete.id}`);
+            fetchResources();
         } catch (error) {
-            console.error('Failed to delete Testimonial:', error);
+            console.error('Failed to delete Resource:', error);
+            alert('Failed to delete resource');
         } finally {
             setItemToDelete(null);
         }
     };
 
-    const handleDelete = (id: string) => {
-        setItemToDelete(id);
+    const handleDelete = (id: string, title: string) => {
+        setItemToDelete({ id, title } as Resource);
     };
 
-    const handleToggleActive = async (testimonial: Testimonial) => {
+    const handleToggleActive = async (resource: Resource) => {
         try {
-            const newStatus = !testimonial.isActive;
-            setTestimonials(current => current.map(t => t.id === testimonial.id ? { ...t, isActive: newStatus } : t));
-            await axios.put(`/testimonial/${testimonial.id}`, { ...testimonial, isActive: newStatus });
+            const newStatus = !resource.isActive;
+            setResources(current => current.map(r => r.id === resource.id ? { ...r, isActive: newStatus } : r));
+            await axios.put(`/resource/${resource.id}`, { ...resource, isActive: newStatus });
         } catch (error) {
-            console.error('Failed to toggle testimonial status:', error);
-            fetchTestimonials();
+            console.error('Failed to toggle resource status:', error);
+            fetchResources();
         }
     };
 
@@ -100,25 +96,25 @@ export default function TestimonialList() {
 
         if (!draggedItemId || draggedItemId === targetId) return;
 
-        const draggedIndex = testimonials.findIndex(t => t.id === draggedItemId);
-        const targetIndex = testimonials.findIndex(t => t.id === targetId);
+        const draggedIndex = resources.findIndex(r => r.id === draggedItemId);
+        const targetIndex = resources.findIndex(r => r.id === targetId);
 
         if (draggedIndex === -1 || targetIndex === -1) return;
 
-        const newTestimonials = [...testimonials];
-        const [removedItem] = newTestimonials.splice(draggedIndex, 1);
-        newTestimonials.splice(targetIndex, 0, removedItem);
+        const newResources = [...resources];
+        const [removedItem] = newResources.splice(draggedIndex, 1);
+        newResources.splice(targetIndex, 0, removedItem);
 
-        setTestimonials(newTestimonials);
+        setResources(newResources);
         setIsSavingOrder(true);
 
         try {
-            const payload = newTestimonials.map((t, index) => ({ id: t.id, order: index }));
-            await axios.put('/testimonial/reorder', payload);
+            const payload = newResources.map((r, index) => ({ id: r.id, order: index }));
+            await axios.put('/resource/reorder', payload);
         } catch (error) {
             console.error('Failed to save new order:', error);
             alert('Failed to save the new order. Refreshing.');
-            fetchTestimonials();
+            fetchResources();
         } finally {
             setIsSavingOrder(false);
         }
@@ -132,15 +128,15 @@ export default function TestimonialList() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900">Manage Community Stories</h1>
-                    <p className="text-sm text-gray-500 mt-1">Manage testimonials shown on the website.</p>
+                    <h1 className="text-2xl font-bold tracking-tight text-gray-900">Manage Resources</h1>
+                    <p className="text-sm text-gray-500 mt-1">Manage dynamically generated resource pages.</p>
                 </div>
                 <Link
-                    href="/dashboard/testimonials/create"
+                    href="/dashboard/resources/create"
                     className="flex items-center space-x-2 bg-[#023051] text-white px-4 py-2 rounded-lg hover:bg-[#023051]/90"
                 >
                     <Plus className="w-5 h-5" />
-                    <span>Add Story</span>
+                    <span>Create Resource</span>
                 </Link>
             </div>
 
@@ -149,43 +145,37 @@ export default function TestimonialList() {
                     <thead className="bg-gray-50">
                         <tr>
                             <th className="px-6 py-3 text-left w-10"></th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">URL Route</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody className={`bg-white divide-y divide-gray-200 ${isSavingOrder ? 'opacity-50 pointer-events-none' : ''}`}>
-                        {testimonials.map((testimonial) => (
+                        {resources.map((resource) => (
                             <tr
-                                key={testimonial.id}
+                                key={resource.id}
                                 draggable
-                                onDragStart={(e) => handleDragStart(e, testimonial.id)}
-                                onDragOver={(e) => handleDragOver(e, testimonial.id)}
+                                onDragStart={(e) => handleDragStart(e, resource.id)}
+                                onDragOver={(e) => handleDragOver(e, resource.id)}
                                 onDragLeave={handleDragLeave}
-                                onDrop={(e) => handleDrop(e, testimonial.id)}
+                                onDrop={(e) => handleDrop(e, resource.id)}
                                 onDragEnd={handleDragEnd}
-                                className={`transition-colors group ${dragOverItemId === testimonial.id ? 'bg-blue-50 border-t-2 border-t-blue-500' : 'hover:bg-gray-50'}`}
+                                className={`transition-colors group ${dragOverItemId === resource.id ? 'bg-blue-50 border-t-2 border-t-blue-500' : 'hover:bg-gray-50'}`}
                             >
                                 <td className="px-6 py-4 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 transition-colors">
                                     <GripVertical className="w-5 h-5" />
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
-                                        {testimonial.image ? (
-                                            <div className="h-10 w-10 flex-shrink-0 mr-3">
-                                                <img className="h-10 w-10 rounded-full object-cover border border-gray-200" src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${testimonial.image}`} alt={testimonial.name} />
-                                            </div>
-                                        ) : (
-                                            <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mr-3 text-gray-500">
-                                                <Star className="h-5 w-5" />
-                                            </div>
-                                        )}
-                                        <div className="text-sm font-medium text-gray-900">{testimonial.name}</div>
+                                        <div className="h-10 w-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 mr-3 text-blue-600">
+                                            <FileText className="h-5 w-5" />
+                                        </div>
+                                        <div className="text-sm font-medium text-gray-900">{resource.title}</div>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
-                                    {testimonial.role}
+                                <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                    /resources/<span className="font-mono text-gray-900">{resource.slug}</span>
                                 </td>
                                 <td className="px-6 py-4 text-sm">
                                     <label className="inline-flex items-center cursor-pointer group">
@@ -193,26 +183,26 @@ export default function TestimonialList() {
                                             <input
                                                 type="checkbox"
                                                 className="sr-only peer"
-                                                checked={testimonial.isActive}
-                                                onChange={() => handleToggleActive(testimonial)}
+                                                checked={resource.isActive}
+                                                onChange={() => handleToggleActive(resource)}
                                             />
                                             <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500 transition-colors shadow-sm"></div>
                                         </div>
-                                        <span className={`ml-3 text-sm font-medium transition-colors ${testimonial.isActive ? 'text-emerald-600' : 'text-gray-400'}`}>
-                                            {testimonial.isActive ? 'Active' : 'Inactive'}
+                                        <span className={`ml-3 text-sm font-medium transition-colors ${resource.isActive ? 'text-emerald-600' : 'text-gray-400'}`}>
+                                            {resource.isActive ? 'Active' : 'Inactive'}
                                         </span>
                                     </label>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div className="flex justify-end space-x-2">
                                         <Link
-                                            href={`/dashboard/testimonials/${testimonial.id}`}
+                                            href={`/dashboard/resources/${resource.id}`}
                                             className="text-blue-600 hover:text-blue-900 p-2 rounded-lg hover:bg-blue-50"
                                         >
                                             <Edit2 className="w-4 h-4" />
                                         </Link>
                                         <button
-                                            onClick={() => handleDelete(testimonial.id)}
+                                            onClick={() => handleDelete(resource.id, resource.title)}
                                             className="text-red-600 hover:text-red-900 p-2 rounded-lg hover:bg-red-50"
                                         >
                                             <Trash2 className="w-4 h-4" />
@@ -221,10 +211,10 @@ export default function TestimonialList() {
                                 </td>
                             </tr>
                         ))}
-                        {testimonials.length === 0 && (
+                        {resources.length === 0 && (
                             <tr>
                                 <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                                    No testimonials found. Create one to get started.
+                                    No resources found. Create one to get started.
                                 </td>
                             </tr>
                         )}
@@ -236,8 +226,8 @@ export default function TestimonialList() {
                 isOpen={!!itemToDelete}
                 onClose={() => setItemToDelete(null)}
                 onConfirm={confirmDelete}
-                title="Delete Community Story"
-                message="Are you sure you want to delete this story? This action cannot be undone."
+                title="Delete Resource"
+                message={`Are you sure you want to delete "${itemToDelete?.title}"? This action cannot be undone.`}
                 confirmText="Delete"
             />
         </div>
