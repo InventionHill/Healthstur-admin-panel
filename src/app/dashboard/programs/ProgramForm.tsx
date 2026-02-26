@@ -38,14 +38,25 @@ interface Program {
     solutions?: Solution[];
     isActive?: boolean;
     iconColor?: string;
+
+    // Curated Track Fields
+    isCurated?: boolean;
+    curatedTitle?: string;
+    curatedDescription?: string;
+    curatedImage?: string;
+    curatedIcon?: string;
+    curatedIconWidth?: number;
+    curatedIconHeight?: number;
+    curatedLinkText?: string;
 }
 
 export default function ProgramForm({ initialData }: { initialData?: Program }) {
     const router = useRouter();
     const [isUploading, setIsUploading] = useState(false);
     const [isUploadingHomeImage, setIsUploadingHomeImage] = useState(false);
+    const [isUploadingCuratedImage, setIsUploadingCuratedImage] = useState(false);
     const [apiError, setApiError] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<'home' | 'program' | 'solutions'>('home');
+    const [activeTab, setActiveTab] = useState<'home' | 'program' | 'solutions' | 'curated'>('home');
 
     const [formData, setFormData] = useState({
         name: initialData?.name || '',
@@ -63,6 +74,16 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
         subItems: initialData?.subItems ? JSON.stringify(initialData.subItems, null, 2) : '[]',
         isActive: initialData?.isActive ?? true,
         iconColor: initialData?.iconColor || '#023051',
+
+        // Curated Track Fields
+        isCurated: initialData?.isCurated || false,
+        curatedTitle: initialData?.curatedTitle || '',
+        curatedDescription: initialData?.curatedDescription || '',
+        curatedImage: initialData?.curatedImage || '',
+        curatedIcon: initialData?.curatedIcon || '',
+        curatedIconWidth: initialData?.curatedIconWidth || 30,
+        curatedIconHeight: initialData?.curatedIconHeight || 30,
+        curatedLinkText: initialData?.curatedLinkText || 'Start Transformation',
     });
 
     const [isManualSlug, setIsManualSlug] = useState(!!initialData);
@@ -77,6 +98,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
     const [isEditingSolution, setIsEditingSolution] = useState(false);
 
     const [isIconDropdownOpen, setIsIconDropdownOpen] = useState(false);
+    const [isCuratedIconDropdownOpen, setIsCuratedIconDropdownOpen] = useState(false);
     const [iconSearchQuery, setIconSearchQuery] = useState('');
     const [draggedBulletIndex, setDraggedBulletIndex] = useState<number | null>(null);
     const [draggedSolutionIndex, setDraggedSolutionIndex] = useState<number | null>(null);
@@ -144,6 +166,16 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                 solutions: solutionsList,
                 isActive: formData.isActive,
                 iconColor: formData.iconColor,
+
+                // Curated Track Fields
+                isCurated: formData.isCurated,
+                curatedTitle: formData.curatedTitle,
+                curatedDescription: formData.curatedDescription,
+                curatedImage: formData.curatedImage,
+                curatedIcon: formData.curatedIcon,
+                curatedIconWidth: Number(formData.curatedIconWidth),
+                curatedIconHeight: Number(formData.curatedIconHeight),
+                curatedLinkText: formData.curatedLinkText,
             };
 
             if (initialData?.id) {
@@ -167,12 +199,13 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
         }
     };
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, isHomeImage: boolean = false) => {
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, imageType: 'home' | 'program' | 'curated' = 'program') => {
         const file = e.target.files?.[0];
         if (!file) return;
 
         try {
-            if (isHomeImage) setIsUploadingHomeImage(true);
+            if (imageType === 'curated') setIsUploadingCuratedImage(true);
+            else if (imageType === 'home') setIsUploadingHomeImage(true);
             else setIsUploading(true);
 
             const data = new FormData();
@@ -182,7 +215,9 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
-            if (isHomeImage) {
+            if (imageType === 'curated') {
+                setFormData(prev => ({ ...prev, curatedImage: res.data.url }));
+            } else if (imageType === 'home') {
                 setFormData(prev => ({ ...prev, homeBackground: res.data.url }));
             } else {
                 setFormData(prev => ({ ...prev, background: res.data.url }));
@@ -193,7 +228,8 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
             setApiError('Error uploading image');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
-            if (isHomeImage) setIsUploadingHomeImage(false);
+            if (imageType === 'curated') setIsUploadingCuratedImage(false);
+            else if (imageType === 'home') setIsUploadingHomeImage(false);
             else setIsUploading(false);
         }
     };
@@ -404,6 +440,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                 <button type="button" onClick={() => setActiveTab('home')} className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors duration-200 ${activeTab === 'home' ? 'border-[#023051] text-[#023051]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Home Page Hero</button>
                 <button type="button" onClick={() => setActiveTab('program')} className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors duration-200 ${activeTab === 'program' ? 'border-[#023051] text-[#023051]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Program Page Hero</button>
                 <button type="button" onClick={() => setActiveTab('solutions')} className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors duration-200 ${activeTab === 'solutions' ? 'border-[#023051] text-[#023051]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Program Solutions</button>
+                <button type="button" onClick={() => setActiveTab('curated')} className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors duration-200 ${activeTab === 'curated' ? 'border-[#023051] text-[#023051]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Curated Track</button>
             </div>
 
             {/* TAB CONTENT: HOME HERO */}
@@ -423,7 +460,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                             <label className="flex items-center justify-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors border border-gray-300 shadow-sm text-sm font-medium">
                                 <Upload className="w-4 h-4 mr-2" />
                                 {isUploadingHomeImage ? 'Uploading...' : 'Upload Home Image'}
-                                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, true)} disabled={isUploadingHomeImage} />
+                                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'home')} disabled={isUploadingHomeImage} />
                             </label>
                             {formData.homeBackground && (
                                 <div className="w-16 h-12 rounded overflow-hidden border border-gray-300 shadow-sm">
@@ -522,7 +559,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                             <label className="flex items-center justify-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors border border-gray-300 shadow-sm text-sm font-medium">
                                 <Upload className="w-4 h-4 mr-2" />
                                 {isUploading ? 'Uploading...' : 'Upload Image'}
-                                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, false)} disabled={isUploading} />
+                                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'program')} disabled={isUploading} />
                             </label>
                             {formData.background && (
                                 <div className="w-16 h-12 rounded overflow-hidden border border-gray-300 shadow-sm">
@@ -694,6 +731,153 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                             </div>
                         )}
                     </div>
+                </div>
+            )}
+
+            {/* TAB CONTENT: CURATED TRACK */}
+            {activeTab === 'curated' && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h3 className="text-lg font-bold text-gray-900">Curated Track Settings</h3>
+                            <p className="text-sm text-gray-500">Feature this program on the Home Page under "Our Curated Tracks".</p>
+                        </div>
+                        <label className="flex items-center gap-2 cursor-pointer select-none shrink-0 py-2 border border-gray-200 px-3 rounded-lg bg-gray-50">
+                            <span className="text-sm font-medium text-gray-700">Enable as Curated Track</span>
+                            <div className="relative">
+                                <input
+                                    type="checkbox"
+                                    className="sr-only peer"
+                                    checked={formData.isCurated}
+                                    onChange={(e) => setFormData({ ...formData, isCurated: e.target.checked })}
+                                />
+                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                            </div>
+                        </label>
+                    </div>
+
+                    {formData.isCurated && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-lg border border-gray-200 shadow-inner">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                <input required={formData.isCurated} value={formData.curatedTitle} onChange={(e) => setFormData({ ...formData, curatedTitle: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. Total Transformation" />
+                                <p className="text-xs text-gray-500 mt-1">Title to display on the Curated Track card.</p>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Link Text</label>
+                                <input required={formData.isCurated} value={formData.curatedLinkText} onChange={(e) => setFormData({ ...formData, curatedLinkText: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. Start Transformation" />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea required={formData.isCurated} rows={3} value={formData.curatedDescription} onChange={(e) => setFormData({ ...formData, curatedDescription: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="Brief description for the track." />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Card Background Image (Vertical format recommended)</label>
+                                <div className="flex items-center gap-3">
+                                    <label className="flex items-center justify-center px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-lg cursor-pointer transition-colors border border-gray-300 shadow-sm text-sm font-medium w-fit">
+                                        <Upload className="w-4 h-4 mr-2" />
+                                        {isUploadingCuratedImage ? 'Uploading...' : 'Upload Image'}
+                                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'curated')} disabled={isUploadingCuratedImage} />
+                                    </label>
+                                    {formData.curatedImage && (
+                                        <div className="w-16 h-20 rounded overflow-hidden border border-gray-300 shadow-sm flex-shrink-0">
+                                            <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${formData.curatedImage}`} alt="Preview" className="w-full h-full object-cover" />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Card Icon</label>
+                                <div className="relative">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsCuratedIconDropdownOpen(!isCuratedIconDropdownOpen)}
+                                        className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-white text-gray-900 text-left flex items-center justify-between"
+                                    >
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                            <DynamicIcon name={formData.curatedIcon || 'Activity'} className="w-5 h-5" />
+                                        </div>
+                                        <span className="block truncate">{formData.curatedIcon || 'Select an Icon'}</span>
+                                        <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                            <LucideIcons.ChevronDown className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                                        </span>
+                                    </button>
+
+                                    {isCuratedIconDropdownOpen && (
+                                        <>
+                                            <div className="fixed inset-0 z-10" onClick={() => setIsCuratedIconDropdownOpen(false)}></div>
+                                            <div className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                                                <div className="px-2 pb-2 sticky top-0 bg-white z-30">
+                                                    <input
+                                                        type="text"
+                                                        className="w-full border border-gray-300 rounded-md py-1.5 px-3 text-sm focus:outline-none focus:ring-primary focus:border-primary text-gray-900 bg-white placeholder-gray-400"
+                                                        placeholder="Search icons..."
+                                                        value={iconSearchQuery}
+                                                        onChange={(e) => setIconSearchQuery(e.target.value)}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        autoFocus
+                                                    />
+                                                </div>
+                                                <ul className="relative z-20">
+                                                    <li
+                                                        className={`cursor-default select-none relative py-2 pl-3 pr-9 hover:bg-gray-50 ${!formData.curatedIcon ? 'bg-blue-50 text-blue-700' : 'text-gray-900'}`}
+                                                        onClick={() => {
+                                                            setFormData({ ...formData, curatedIcon: '' });
+                                                            setIsCuratedIconDropdownOpen(false);
+                                                            setIconSearchQuery('');
+                                                        }}
+                                                    >
+                                                        <div className="flex items-center">
+                                                            <span className="ml-3 block truncate font-normal">Select an Icon (Clear)</span>
+                                                        </div>
+                                                    </li>
+                                                    {COMMON_ICONS.filter(icon => icon.toLowerCase().includes(iconSearchQuery.toLowerCase())).map((iconName) => {
+                                                        const isSelected = formData.curatedIcon === iconName;
+                                                        return (
+                                                            <li
+                                                                key={iconName}
+                                                                className={`cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-gray-50 ${isSelected ? 'bg-blue-50 text-blue-700' : 'text-gray-900'}`}
+                                                                onClick={() => {
+                                                                    setFormData({ ...formData, curatedIcon: iconName });
+                                                                    setIsCuratedIconDropdownOpen(false);
+                                                                    setIconSearchQuery('');
+                                                                }}
+                                                            >
+                                                                <div className="flex items-center">
+                                                                    <DynamicIcon name={iconName} className="w-5 h-5 text-gray-500" />
+                                                                    <span className={`ml-3 block truncate ${isSelected ? 'font-semibold' : 'font-normal'}`}>
+                                                                        {iconName}
+                                                                    </span>
+                                                                </div>
+                                                                {isSelected && (
+                                                                    <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600">
+                                                                        <LucideIcons.Check className="h-5 w-5" aria-hidden="true" />
+                                                                    </span>
+                                                                )}
+                                                            </li>
+                                                        );
+                                                    })}
+                                                    {COMMON_ICONS.filter(icon => icon.toLowerCase().includes(iconSearchQuery.toLowerCase())).length === 0 && (
+                                                        <li className="text-gray-500 text-sm text-center py-4">No icons found.</li>
+                                                    )}
+                                                </ul>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Icon Width (px)</label>
+                                    <input type="number" required={formData.isCurated} value={formData.curatedIconWidth} onChange={(e) => setFormData({ ...formData, curatedIconWidth: Number(e.target.value) })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" min={10} max={100} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Icon Height (px)</label>
+                                    <input type="number" required={formData.isCurated} value={formData.curatedIconHeight} onChange={(e) => setFormData({ ...formData, curatedIconHeight: Number(e.target.value) })} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" min={10} max={100} />
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
 
