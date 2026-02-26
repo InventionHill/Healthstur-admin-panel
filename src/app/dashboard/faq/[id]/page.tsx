@@ -1,8 +1,10 @@
 import FaqForm from '../components/FaqForm';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { use } from 'react';
 
-export default function EditFaqPage({ params }: { params: { id: string } }) {
+export default function EditFaqPage({ params }: { params: Promise<{ id: string }> }) {
+    const resolvedParams = use(params);
     return (
         <div className="space-y-6">
             <div className="flex items-center space-x-4">
@@ -18,7 +20,7 @@ export default function EditFaqPage({ params }: { params: { id: string } }) {
                 </div>
             </div>
 
-            <FaqForm id={params.id} />
+            <FaqForm id={resolvedParams.id} />
         </div>
     );
 }

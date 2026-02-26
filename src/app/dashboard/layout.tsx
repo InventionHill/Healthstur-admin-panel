@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, Users, Settings, LogOut, Menu, X, Activity, Dumbbell, Calendar, BarChart, CreditCard, Shield, ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, LogOut, Menu, X, Activity, Dumbbell, Calendar, BarChart, CreditCard, Shield, ChevronLeft, ChevronRight, HelpCircle, Star } from 'lucide-react';
 import axios from '@/lib/axios';
 
 export default function DashboardLayout({
@@ -57,6 +57,7 @@ export default function DashboardLayout({
         { name: 'Programs', href: '/dashboard/programs', icon: Dumbbell },
         { name: 'Curated Tracks', href: '/dashboard/curated-tracks', icon: Activity },
         { name: 'FAQs', href: '/dashboard/faq', icon: HelpCircle },
+        { name: 'Community Stories', href: '/dashboard/testimonials', icon: Star },
     ];
 
     return (
