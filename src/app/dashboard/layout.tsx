@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Building2, LayoutDashboard, Users, UserCog, CalendarDays, Wallet, Settings, Menu, X, LogOut, CheckSquare, Bell, FileQuestion, Map, Layers, Star, BookOpen, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Building2, LayoutDashboard, Users, UserCog, CalendarDays, Wallet, Settings, Menu, X, LogOut, CheckSquare, Bell, FileQuestion, Map, Layers, Star, BookOpen, Activity, ChevronLeft, ChevronRight, MessageSquare, ClipboardList, MessageCircle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import axios from '@/lib/axios';
 
@@ -60,6 +60,9 @@ export default function DashboardLayout({
         { name: 'Community Stories', href: '/dashboard/testimonials', icon: Star },
         { name: 'FAQ', href: '/dashboard/faq', icon: FileQuestion },
         { name: 'Services', href: '/dashboard/services', icon: Activity },
+        { name: 'Consultations', href: '/dashboard/consultations', icon: MessageSquare },
+        { name: 'Applications', href: '/dashboard/applications', icon: ClipboardList },
+        { name: 'Feedback', href: '/dashboard/feedback', icon: MessageCircle },
         { name: 'Company Settings', href: '/dashboard/settings', icon: Settings },
     ];
 
