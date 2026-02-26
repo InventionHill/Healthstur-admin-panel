@@ -59,6 +59,8 @@ export default function DashboardLayout({
         { name: 'Resources', href: '/dashboard/resources', icon: BookOpen },
         { name: 'Community Stories', href: '/dashboard/testimonials', icon: Star },
         { name: 'FAQ', href: '/dashboard/faq', icon: FileQuestion },
+        { name: 'Services', href: '/dashboard/services', icon: Activity },
+        { name: 'Company Settings', href: '/dashboard/settings', icon: Settings },
     ];
 
     return (
