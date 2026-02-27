@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Building2, LayoutDashboard, Users, UserCog, CalendarDays, Wallet, Settings, Menu, X, LogOut, CheckSquare, Bell, FileQuestion, Map, Layers, Star, BookOpen, Activity, ChevronLeft, ChevronRight, MessageSquare, ClipboardList, MessageCircle, ShieldCheck, Lock, FileText } from 'lucide-react';
+import { Building2, LayoutDashboard, Users, UserCog, CalendarDays, Wallet, Settings, Menu, X, LogOut, CheckSquare, Bell, FileQuestion, Map, Layers, Star, BookOpen, Activity, ChevronLeft, ChevronRight, MessageSquare, ClipboardList, MessageCircle, ShieldCheck, Lock, FileText, Trophy, Tags } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import axios from '@/lib/axios';
 
@@ -58,6 +58,8 @@ export default function DashboardLayout({
         { name: 'Programs', href: '/dashboard/programs', icon: Layers },
         { name: 'Resources', href: '/dashboard/resources', icon: BookOpen },
         { name: 'Community Stories', href: '/dashboard/testimonials', icon: Star },
+        { name: 'Success Stories', href: '/dashboard/success-stories', icon: Trophy },
+        { name: 'Story Categories', href: '/dashboard/story-categories', icon: Tags },
         { name: 'FAQ', href: '/dashboard/faq', icon: FileQuestion },
         { name: 'Services', href: '/dashboard/services', icon: Activity },
         { name: 'Consultations', href: '/dashboard/consultations', icon: MessageSquare },

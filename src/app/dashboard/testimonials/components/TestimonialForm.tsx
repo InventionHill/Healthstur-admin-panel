@@ -61,8 +61,8 @@ export default function TestimonialForm({ id }: TestimonialFormProps) {
             const data = new FormData();
             data.append('file', file);
 
-            // Reusing the curated tracks upload endpoint
-            const res = await axios.post('/curated-tracks/upload', data, {
+            // Reusing the programs upload endpoint
+            const res = await axios.post('/programs/upload', data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 

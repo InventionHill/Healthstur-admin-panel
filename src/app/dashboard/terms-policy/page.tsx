@@ -58,7 +58,7 @@ export default function TermsPolicyPage() {
     }
 
     return (
-        <div className="space-y-6 max-w-4xl">
+        <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight text-gray-900">Terms & Conditions</h1>
                 <p className="text-sm text-gray-500 mt-1">Manage the content displayed on the public Terms & Conditions page (accepts HTML formatting).</p>
