@@ -140,7 +140,7 @@ export default function ResourceList() {
                 </Link>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
@@ -148,7 +148,7 @@ export default function ResourceList() {
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">URL Route</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 z-10 bg-gray-50 shadow-[-12px_0_15px_-3px_rgba(0,0,0,0.05)]">Actions</th>
                         </tr>
                     </thead>
                     <tbody className={`bg-white divide-y divide-gray-200 ${isSavingOrder ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -193,7 +193,7 @@ export default function ResourceList() {
                                         </span>
                                     </label>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <td className={`px-6 py-4 whitespace-nowrap text-right text-sm font-medium sticky right-0 z-10 transition-colors shadow-[-12px_0_15px_-3px_rgba(0,0,0,0.05)] ${dragOverItemId === resource.id ? 'bg-blue-50' : 'bg-white group-hover:bg-gray-50'}`}>
                                     <div className="flex justify-end space-x-2">
                                         <Link
                                             href={`/dashboard/resources/${resource.id}`}

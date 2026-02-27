@@ -73,12 +73,12 @@ export default function FeedbackList() {
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User / Order ID</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Feedback Details</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 z-10 bg-gray-50 shadow-[-12px_0_15px_-3px_rgba(0,0,0,0.05)]">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {feedback.map((item) => (
-                            <tr key={item.id} className="hover:bg-gray-50">
+                            <tr key={item.id} className="hover:bg-gray-50 group">
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {new Date(item.createdAt).toLocaleDateString()}
                                 </td>
@@ -101,7 +101,7 @@ export default function FeedbackList() {
                                     <div className="font-medium">{item.subject}</div>
                                     <div className="text-gray-500 text-xs mt-1 line-clamp-2">{item.message}</div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium sticky right-0 z-10 bg-white group-hover:bg-gray-50 transition-colors shadow-[-12px_0_15px_-3px_rgba(0,0,0,0.05)]">
                                     <button
                                         onClick={() => handleDelete(item.id)}
                                         className="text-red-600 hover:text-red-900 p-2 rounded-lg hover:bg-red-50"

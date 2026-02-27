@@ -139,7 +139,7 @@ export default function DashboardLayout({
             </aside>
 
             {/* Main Content */}
-            <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 bg-[#f8f9fa] ${isDesktopCollapsed ? 'md:pl-20' : 'md:pl-64'}`}>
+            <div className={`flex-1 min-w-0 flex flex-col min-h-screen transition-all duration-300 bg-[#f8f9fa] ${isDesktopCollapsed ? 'md:pl-20' : 'md:pl-64'}`}>
                 {/* Header - Mobile & Search/Profile area */}
                 <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 sm:px-8 z-10 sticky top-0">
                     <div className="flex items-center md:hidden">

@@ -296,15 +296,15 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
             )}
 
             {/* General Info */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Program Title (Name)</label>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-wrap sm:flex-nowrap items-center gap-4">
                         <input
                             required
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white"
+                            className="flex-1 min-w-[120px] w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white"
                         />
                         <label className="flex items-center gap-2 cursor-pointer select-none shrink-0 py-2 border border-gray-200 px-3 rounded-lg bg-gray-50">
                             <span className="text-sm font-medium text-gray-700">Active</span>
@@ -416,7 +416,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Hover Color</label>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
                         <input
                             type="color"
                             value={formData.iconColor}
@@ -428,7 +428,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                             type="text"
                             value={formData.iconColor}
                             onChange={(e) => setFormData({ ...formData, iconColor: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white font-mono text-sm uppercase"
+                            className="w-full min-w-[100px] px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white font-mono text-sm uppercase"
                         />
                     </div>
                     <p className="text-xs text-gray-500 mt-1">Navbar icon hover colour.</p>
@@ -623,7 +623,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                                     <textarea rows={2} value={currentSolution.benefits} onChange={e => setCurrentSolution(p => ({ ...p, benefits: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Solution Image</label>
                                         <div className="flex items-center gap-3">
@@ -641,7 +641,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                        <label className="inline-flex items-center gap-2 cursor-pointer select-none py-2 border border-gray-200 px-3 rounded-lg bg-white h-10 w-full sm:w-auto">
+                                        <label className="inline-flex items-center gap-2 cursor-pointer select-none py-2 border border-gray-200 px-3 rounded-lg bg-white h-10 w-full">
                                             <span className="text-sm font-medium text-gray-700">Active</span>
                                             <div className="relative mt-0.5">
                                                 <input

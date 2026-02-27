@@ -208,11 +208,11 @@ export default function ProgramsPage() {
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-100">
                                     <th className="px-6 py-4 text-sm font-semibold text-gray-900 w-10"></th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-900">Name</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-900">Heading</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-900">Status</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-900">Href</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-gray-900 text-right">Actions</th>
+                                    <th className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">Name</th>
+                                    <th className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">Heading</th>
+                                    <th className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">Status</th>
+                                    <th className="px-6 py-4 text-sm font-semibold text-gray-900 whitespace-nowrap">Href</th>
+                                    <th className="px-6 py-4 text-sm font-semibold text-gray-900 text-right sticky right-0 z-10 bg-gray-50 shadow-[-12px_0_15px_-3px_rgba(0,0,0,0.05)]">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className={`divide-y divide-gray-100 ${isSavingOrder ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -230,9 +230,9 @@ export default function ProgramsPage() {
                                         <td className="px-6 py-4 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 transition-colors">
                                             <GripVertical className="w-5 h-5" />
                                         </td>
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900 select-none">{program.name}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">{program.heading}</td>
-                                        <td className="px-6 py-4 text-sm">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 select-none">{program.name}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{program.heading}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
                                             <label className="inline-flex items-center cursor-pointer group">
                                                 <div className="relative flex items-center">
                                                     <input
@@ -248,8 +248,8 @@ export default function ProgramsPage() {
                                                 </span>
                                             </label>
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">{program.href.replace(/^\/programs\//, '')}</td>
-                                        <td className="px-6 py-4 text-sm text-right space-x-3">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{program.href.replace(/^\/programs\//, '')}</td>
+                                        <td className={`px-6 py-4 whitespace-nowrap text-sm text-right space-x-3 sticky right-0 z-10 transition-colors shadow-[-12px_0_15px_-3px_rgba(0,0,0,0.05)] ${dragOverItemId === program.id ? 'bg-blue-50' : 'bg-white group-hover:bg-gray-50'}`}>
 
                                             <Link
                                                 href={`/dashboard/programs/${program.id}/edit`}
