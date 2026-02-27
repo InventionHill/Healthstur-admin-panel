@@ -63,6 +63,8 @@ export default function DashboardLayout({
         { name: 'Story Categories', href: '/dashboard/story-categories', icon: Tags },
         { name: 'FAQ', href: '/dashboard/faq', icon: FileQuestion },
         { name: 'Services', href: '/dashboard/services', icon: Activity },
+        { name: 'Pricing Durations', href: '/dashboard/pricing', icon: CalendarDays },
+        { name: 'Pricing Plans', href: '/dashboard/pricing-plans', icon: Wallet },
         { name: 'Consultations', href: '/dashboard/consultations', icon: MessageSquare },
         { name: 'Applications', href: '/dashboard/applications', icon: ClipboardList },
         { name: 'Feedback', href: '/dashboard/feedback', icon: MessageCircle },
@@ -95,20 +97,20 @@ export default function DashboardLayout({
 
                 <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto overflow-x-hidden">
                     {navItems.map((item) => {
-                        const isActive = item.href === '/dashboard' ? pathname === '/dashboard' : pathname?.startsWith(item.href);
+                        const isActive = item.href === '/dashboard' ? pathname === '/dashboard' : pathname === item.href || pathname?.startsWith(`${item.href}/`);
                         return (
                             <Link
                                 key={item.name}
                                 href={item.href}
                                 title={isDesktopCollapsed ? item.name : undefined}
                                 className={`group flex items-center py-2.5 rounded-lg transition-all duration-200 ${isActive
-                                        ? 'text-white bg-white/10'
-                                        : 'text-white/70 hover:text-white hover:bg-white/5'
+                                    ? 'text-white bg-white/10'
+                                    : 'text-white/70 hover:text-white hover:bg-white/5'
                                     } ${isDesktopCollapsed ? 'justify-center px-0' : 'px-3'}`}
                             >
                                 <item.icon className={`flex-shrink-0 h-5 w-5 transition-colors ${isActive
-                                        ? 'text-white'
-                                        : 'text-white/50 group-hover:text-white'
+                                    ? 'text-white'
+                                    : 'text-white/50 group-hover:text-white'
                                     } ${isDesktopCollapsed ? '' : 'mr-4'}`} strokeWidth={1.5} />
                                 {!isDesktopCollapsed && <span className="text-sm font-medium whitespace-nowrap opacity-100 transition-opacity duration-300">{item.name}</span>}
                             </Link>
@@ -200,15 +202,15 @@ export default function DashboardLayout({
                             <div className="mt-5 flex-1 h-0 overflow-y-auto">
                                 <nav className="px-2 space-y-1">
                                     {navItems.map((item) => {
-                                        const isActive = item.href === '/dashboard' ? pathname === '/dashboard' : pathname?.startsWith(item.href);
+                                        const isActive = item.href === '/dashboard' ? pathname === '/dashboard' : pathname === item.href || pathname?.startsWith(`${item.href}/`);
                                         return (
                                             <Link
                                                 key={item.name}
                                                 href={item.href}
                                                 onClick={() => setSidebarOpen(false)}
                                                 className={`group flex items-center px-2 py-2 text-base font-medium rounded-md transition-colors ${isActive
-                                                        ? 'bg-primary-hover text-white'
-                                                        : 'text-gray-300 hover:bg-primary-hover hover:text-white'
+                                                    ? 'bg-primary-hover text-white'
+                                                    : 'text-gray-300 hover:bg-primary-hover hover:text-white'
                                                     }`}
                                             >
                                                 <item.icon className={`mr-4 h-6 w-6 transition-colors ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'
