@@ -16,6 +16,9 @@ interface Solution {
     description: string;
     approach: string;
     benefits: string;
+    priceIndia?: string;
+    priceUsa?: string;
+    priceEurope?: string;
     image: string;
     isActive?: boolean;
 }
@@ -93,7 +96,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
         : [];
 
     const [solutionsList, setSolutionsList] = useState<Solution[]>(safeInitialSolutions as Solution[]);
-    const [currentSolution, setCurrentSolution] = useState<Solution>({ id: '', title: '', description: '', approach: '', benefits: '', image: '', isActive: true });
+    const [currentSolution, setCurrentSolution] = useState<Solution>({ id: '', title: '', description: '', approach: '', benefits: '', priceIndia: '', priceUsa: '', priceEurope: '', image: '', isActive: true });
     const [isUploadingSolutionImage, setIsUploadingSolutionImage] = useState(false);
     const [isEditingSolution, setIsEditingSolution] = useState(false);
 
@@ -261,6 +264,9 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
         if (!currentSolution.description.trim()) { setApiError('Description is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
         if (!currentSolution.approach.trim()) { setApiError('Approach is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
         if (!currentSolution.benefits.trim()) { setApiError('Benefits is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.priceIndia?.trim()) { setApiError('Price (India) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.priceUsa?.trim()) { setApiError('Price (USA) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.priceEurope?.trim()) { setApiError('Price (Europe) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
         if (!currentSolution.image) { setApiError('Solution Image is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
 
         if (isEditingSolution && currentSolution.id) {
@@ -269,7 +275,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
             const newSolution = { ...currentSolution, id: Date.now().toString() };
             setSolutionsList(prev => [...prev, newSolution]);
         }
-        setCurrentSolution({ id: '', title: '', description: '', approach: '', benefits: '', image: '', isActive: true });
+        setCurrentSolution({ id: '', title: '', description: '', approach: '', benefits: '', priceIndia: '', priceUsa: '', priceEurope: '', image: '', isActive: true });
         setIsEditingSolution(false);
     };
 
@@ -621,6 +627,21 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Benefits (Results)</label>
                                     <textarea rows={2} value={currentSolution.benefits} onChange={e => setCurrentSolution(p => ({ ...p, benefits: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" />
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (India)</label>
+                                        <input value={currentSolution.priceIndia || ''} onChange={e => setCurrentSolution(p => ({ ...p, priceIndia: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. ₹800 per 4 week" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (USA)</label>
+                                        <input value={currentSolution.priceUsa || ''} onChange={e => setCurrentSolution(p => ({ ...p, priceUsa: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. $10 per 4 week" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (Europe)</label>
+                                        <input value={currentSolution.priceEurope || ''} onChange={e => setCurrentSolution(p => ({ ...p, priceEurope: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. €10 per 4 week" />
+                                    </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

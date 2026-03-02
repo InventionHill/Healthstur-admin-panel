@@ -18,19 +18,21 @@ const ArrayInputSection = ({
     items,
     onAdd,
     onRemove,
-    onChange
+    onChange,
+    error
 }: {
     title: string,
     items: string[],
     onAdd: () => void,
     onRemove: (index: number) => void,
-    onChange: (index: number, value: string) => void
+    onChange: (index: number, value: string) => void,
+    error?: string
 }) => (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col h-[380px]">
-        <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/30 rounded-t-xl">
+    <div className={`bg-white rounded-xl border ${error ? 'border-red-500' : 'border-gray-200'} shadow-sm flex flex-col h-[380px]`}>
+        <div className={`px-4 py-3 border-b ${error ? 'border-red-100 bg-red-50/30' : 'border-gray-100 bg-gray-50/30'} flex justify-between items-center rounded-t-xl`}>
             <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#023051]"></div>
-                <h4 className="font-bold text-[#023051] text-xs uppercase tracking-wider">{title}</h4>
+                <div className={`w-1.5 h-1.5 rounded-full ${error ? 'bg-red-500' : 'bg-[#023051]'}`}></div>
+                <h4 className={`font-bold ${error ? 'text-red-600' : 'text-[#023051]'} text-xs uppercase tracking-wider`}>{title}</h4>
             </div>
             <button
                 type="button"
@@ -43,8 +45,10 @@ const ArrayInputSection = ({
 
         <div className="flex-1 overflow-y-auto p-3 space-y-2.5 custom-scrollbar">
             {items.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-center p-4 border-2 border-dashed border-gray-100 rounded-lg">
-                    <p className="text-xs text-gray-400 italic">No items added</p>
+                <div className={`h-full flex flex-col items-center justify-center text-center p-4 border-2 border-dashed ${error ? 'border-red-200 bg-red-50/30' : 'border-gray-100'} rounded-lg`}>
+                    <p className={`text-xs ${error ? 'text-red-500 font-bold' : 'text-gray-400 italic'}`}>
+                        {error || 'No items added'}
+                    </p>
                 </div>
             ) : (
                 items.map((item, index) => (
@@ -93,6 +97,9 @@ export default function PlanForm({ id }: PlanFormProps) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
+    const [priceIndia, setPriceIndia] = useState('');
+    const [priceUsa, setPriceUsa] = useState('');
+    const [priceEurope, setPriceEurope] = useState('');
     const [icon, setIcon] = useState('Star');
     const [buttonText, setButtonText] = useState('BUY NOW');
     const [image, setImage] = useState('');
@@ -101,7 +108,7 @@ export default function PlanForm({ id }: PlanFormProps) {
     const [features, setFeatures] = useState<string[]>(['']);
     const [support, setSupport] = useState<string[]>(['']);
     const [positioning, setPositioning] = useState<string[]>(['']);
-    const [errors, setErrors] = useState<{ price?: string; image?: string;[key: string]: string | undefined }>({});
+    const [errors, setErrors] = useState<{ price?: string; priceIndia?: string; priceUsa?: string; priceEurope?: string; image?: string;[key: string]: string | undefined }>({});
 
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
@@ -129,6 +136,9 @@ export default function PlanForm({ id }: PlanFormProps) {
                     setName(data.name);
                     setDescription(data.description);
                     setPrice(data.price);
+                    setPriceIndia(data.priceIndia || '');
+                    setPriceUsa(data.priceUsa || '');
+                    setPriceEurope(data.priceEurope || '');
                     setIcon(data.icon);
                     setButtonText(data.buttonText);
                     setImage(data.image);
@@ -192,9 +202,33 @@ export default function PlanForm({ id }: PlanFormProps) {
         if (!price || isNaN(Number(price))) {
             newErrors.price = 'Price must be a valid number';
         }
+        if (!priceIndia || isNaN(Number(priceIndia))) {
+            newErrors.priceIndia = 'Price (India) must be a valid number';
+        }
+        if (!priceUsa || isNaN(Number(priceUsa))) {
+            newErrors.priceUsa = 'Price (USA) must be a valid number';
+        }
+        if (!priceEurope || isNaN(Number(priceEurope))) {
+            newErrors.priceEurope = 'Price (Europe) must be a valid number';
+        }
 
         if (!image) {
             newErrors.image = 'Background image is required';
+        }
+
+        const validFeatures = features.filter(f => f.trim() !== '');
+        if (validFeatures.length === 0) {
+            newErrors.features = 'At least one Included Feature is required';
+        }
+
+        const validSupport = support.filter(s => s.trim() !== '');
+        if (validSupport.length === 0) {
+            newErrors.support = 'At least one Support Level is required';
+        }
+
+        const validPositioning = positioning.filter(p => p.trim() !== '');
+        if (validPositioning.length === 0) {
+            newErrors.positioning = 'At least one Positioning (Benefit) is required';
         }
 
         setErrors(newErrors);
@@ -216,6 +250,9 @@ export default function PlanForm({ id }: PlanFormProps) {
             name,
             description,
             price,
+            priceIndia,
+            priceUsa,
+            priceEurope,
             icon,
             buttonText,
             image,
@@ -308,12 +345,14 @@ export default function PlanForm({ id }: PlanFormProps) {
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#023051] focus:border-transparent outline-none transition-all text-gray-900"
-                                placeholder="e.g. Basic, Pro, Elite"
                             />
                         </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Price (Monthly)
+                                Price (Monthly, Fallback)
                             </label>
                             <input
                                 type="text"
@@ -327,6 +366,57 @@ export default function PlanForm({ id }: PlanFormProps) {
                                 placeholder="e.g. 79"
                             />
                             {errors.price && <p className="mt-1 text-xs text-red-500 font-medium">{errors.price}</p>}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Price (India)
+                            </label>
+                            <input
+                                type="text"
+                                required
+                                value={priceIndia}
+                                onChange={(e) => {
+                                    setPriceIndia(e.target.value);
+                                    if (errors.priceIndia) setErrors(prev => ({ ...prev, priceIndia: undefined }));
+                                }}
+                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#023051] focus:border-transparent outline-none transition-all text-gray-900 ${errors.priceIndia ? 'border-red-500 bg-red-50/30' : 'border-gray-300'}`}
+                                placeholder="e.g. 800"
+                            />
+                            {errors.priceIndia && <p className="mt-1 text-xs text-red-500 font-medium">{errors.priceIndia}</p>}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Price (USA)
+                            </label>
+                            <input
+                                type="text"
+                                required
+                                value={priceUsa}
+                                onChange={(e) => {
+                                    setPriceUsa(e.target.value);
+                                    if (errors.priceUsa) setErrors(prev => ({ ...prev, priceUsa: undefined }));
+                                }}
+                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#023051] focus:border-transparent outline-none transition-all text-gray-900 ${errors.priceUsa ? 'border-red-500 bg-red-50/30' : 'border-gray-300'}`}
+                                placeholder="e.g. 10"
+                            />
+                            {errors.priceUsa && <p className="mt-1 text-xs text-red-500 font-medium">{errors.priceUsa}</p>}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Price (Europe)
+                            </label>
+                            <input
+                                type="text"
+                                required
+                                value={priceEurope}
+                                onChange={(e) => {
+                                    setPriceEurope(e.target.value);
+                                    if (errors.priceEurope) setErrors(prev => ({ ...prev, priceEurope: undefined }));
+                                }}
+                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#023051] focus:border-transparent outline-none transition-all text-gray-900 ${errors.priceEurope ? 'border-red-500 bg-red-50/30' : 'border-gray-300'}`}
+                                placeholder="e.g. 10"
+                            />
+                            {errors.priceEurope && <p className="mt-1 text-xs text-red-500 font-medium">{errors.priceEurope}</p>}
                         </div>
                     </div>
 
@@ -498,21 +588,33 @@ export default function PlanForm({ id }: PlanFormProps) {
                                 items={features}
                                 onAdd={() => addArrayItem(setFeatures)}
                                 onRemove={(index) => removeArrayItem(setFeatures, index)}
-                                onChange={(index, value) => handleArrayChange(setFeatures, index, value)}
+                                onChange={(index, value) => {
+                                    handleArrayChange(setFeatures, index, value);
+                                    if (errors.features) setErrors(prev => ({ ...prev, features: undefined }));
+                                }}
+                                error={errors.features}
                             />
                             <ArrayInputSection
                                 title="Support Level"
                                 items={support}
                                 onAdd={() => addArrayItem(setSupport)}
                                 onRemove={(index) => removeArrayItem(setSupport, index)}
-                                onChange={(index, value) => handleArrayChange(setSupport, index, value)}
+                                onChange={(index, value) => {
+                                    handleArrayChange(setSupport, index, value);
+                                    if (errors.support) setErrors(prev => ({ ...prev, support: undefined }));
+                                }}
+                                error={errors.support}
                             />
                             <ArrayInputSection
                                 title="Positioning (Benefits)"
                                 items={positioning}
                                 onAdd={() => addArrayItem(setPositioning)}
                                 onRemove={(index) => removeArrayItem(setPositioning, index)}
-                                onChange={(index, value) => handleArrayChange(setPositioning, index, value)}
+                                onChange={(index, value) => {
+                                    handleArrayChange(setPositioning, index, value);
+                                    if (errors.positioning) setErrors(prev => ({ ...prev, positioning: undefined }));
+                                }}
+                                error={errors.positioning}
                             />
                         </div>
                     </div>
