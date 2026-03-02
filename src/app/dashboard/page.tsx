@@ -70,7 +70,7 @@ export default function DashboardPage() {
     ];
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div className="max-w-7xl mx-auto  sm:px-4 lg:px-8  w-full">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 font-sans tracking-tight">Dashboard Overview</h1>
@@ -82,25 +82,27 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10">
                 {statCards.map((card) => (
                     <Link key={card.name} href={card.href} className="group transition-all hover:scale-[1.02]">
-                        <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 p-6 flex items-start justify-between relative overflow-hidden h-full">
+                        <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 p-4 sm:p-6 flex items-center justify-between relative overflow-hidden h-full">
                             <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity">
                                 <card.icon className="h-24 w-24" />
                             </div>
-                            <div className="relative z-10">
-                                <div className={`h-12 w-12 rounded-xl ${card.color} flex items-center justify-center mb-4 shadow-sm ring-1 ring-black/5`}>
-                                    <card.icon className="h-6 w-6" strokeWidth={2} />
+                            <div className="relative z-10 w-full flex items-center justify-between">
+                                <div>
+                                    <div className={`shrink-0 h-10 w-10 sm:h-12 sm:w-12 rounded-xl ${card.color} flex items-center justify-center mb-3 sm:mb-4 shadow-sm ring-1 ring-black/5`}>
+                                        <card.icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />
+                                    </div>
+                                    <h3 className="text-xs sm:text-sm font-semibold text-gray-500 mb-1">{card.name}</h3>
+                                    <div className="flex items-baseline gap-2">
+                                        <p className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">{card.value}</p>
+                                        <span className="text-[10px] sm:text-xs font-medium text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">+12%</span>
+                                    </div>
                                 </div>
-                                <h3 className="text-sm font-semibold text-gray-500 mb-1">{card.name}</h3>
-                                <div className="flex items-baseline gap-2">
-                                    <p className="text-3xl font-bold text-gray-900 tracking-tight">{card.value}</p>
-                                    <span className="text-xs font-medium text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">+12%</span>
+                                <div className="relative z-10 shrink-0 self-end mb-1">
+                                    <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-gray-300 group-hover:text-primary transition-colors group-hover:translate-x-1" />
                                 </div>
-                            </div>
-                            <div className="self-end relative z-10">
-                                <ArrowRight className="h-5 w-5 text-gray-300 group-hover:text-primary transition-colors group-hover:translate-x-1" />
                             </div>
                         </div>
                     </Link>
@@ -110,19 +112,19 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Traffic Chart */}
                 <div className="lg:col-span-2 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 p-6 flex flex-col">
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4 sm:gap-0">
                         <div className="flex items-center gap-2">
-                            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                                 <Activity className="h-4 w-4 text-primary" />
                             </div>
-                            <h2 className="text-lg font-bold text-gray-900 tracking-tight">Website Traffic</h2>
+                            <h2 className="text-lg font-bold text-gray-900 tracking-tight leading-tight">Website Traffic</h2>
                         </div>
-                        <div className="flex items-center gap-4 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                            <div className="flex items-center gap-1.5">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest">
+                            <div className="flex items-center gap-1.5 shrink-0">
                                 <div className="h-2 w-2 rounded-full bg-primary/40"></div>
                                 <span>Visitors</span>
                             </div>
-                            <span className="bg-gray-50 px-2.5 py-1 rounded-full text-gray-500 border border-gray-100">Last 7 Days</span>
+                            <span className="bg-gray-50 px-2 sm:px-2.5 py-1 rounded-full text-gray-500 border border-gray-100 whitespace-nowrap shrink-0">Last 7 Days</span>
                         </div>
                     </div>
 
@@ -222,15 +224,15 @@ export default function DashboardPage() {
             </div>
 
             {/* Recent Activity Section */}
-            <div className="mt-8 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden flex flex-col">
-                <div className="p-6 border-b border-gray-50 flex items-center justify-between">
+            <div className="mt-8 bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden flex flex-col mb-8">
+                <div className="p-4 sm:p-6 border-b border-gray-50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
                     <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-lg bg-gray-50 flex items-center justify-center">
+                        <div className="shrink-0 h-8 w-8 rounded-lg bg-gray-50 flex items-center justify-center">
                             <ClipboardList className="h-4 w-4 text-gray-400" />
                         </div>
                         <h2 className="text-lg font-bold text-gray-900 tracking-tight">Recent Applications</h2>
                     </div>
-                    <Link href="/dashboard/applications" className="text-sm font-semibold text-primary hover:text-primary-hover flex items-center gap-1 transition-colors">
+                    <Link href="/dashboard/applications" className="shrink-0 self-end sm:self-auto text-sm font-semibold text-primary hover:text-primary-hover flex items-center gap-1 transition-colors">
                         View All <ArrowRight className="h-4 w-4" />
                     </Link>
                 </div>
@@ -239,20 +241,20 @@ export default function DashboardPage() {
                     {data?.recentActivity && data.recentActivity.length > 0 ? (
                         <div className="divide-y divide-gray-50">
                             {data.recentActivity.map((activity) => (
-                                <div key={activity.id} className="p-6 hover:bg-gray-50/50 transition-colors flex items-center justify-between group">
-                                    <div className="flex items-start gap-4">
-                                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shadow-sm ring-1 ring-primary/5">
+                                <div key={activity.id} className="p-4 sm:p-6 hover:bg-gray-50/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 group">
+                                    <div className="flex items-center sm:items-start gap-3 sm:gap-4 w-full sm:w-auto">
+                                        <div className="shrink-0 h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shadow-sm ring-1 ring-primary/5">
                                             {activity.title.split(' ').pop()?.[0] || 'A'}
                                         </div>
-                                        <div>
-                                            <p className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">{activity.title}</p>
-                                            <p className="text-xs text-gray-500 mt-0.5 font-medium">{activity.subtitle}</p>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors truncate">{activity.title}</p>
+                                            <p className="text-xs text-gray-500 mt-0.5 font-medium truncate">{activity.subtitle}</p>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col items-end gap-1">
-                                        <span className="text-[11px] font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full uppercase tracking-wider">{activity.type}</span>
-                                        <div className="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
-                                            <Clock className="h-3 w-3" />
+                                    <div className="flex items-center sm:flex-col justify-between sm:items-end gap-2 sm:gap-1 pl-[52px] sm:pl-0 sm:ml-auto w-full sm:w-auto">
+                                        <span className="text-[10px] sm:text-[11px] font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0">{activity.type}</span>
+                                        <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-gray-400 font-medium shrink-0">
+                                            <Clock className="h-3 w-3 shrink-0" />
                                             <span>{formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}</span>
                                         </div>
                                     </div>

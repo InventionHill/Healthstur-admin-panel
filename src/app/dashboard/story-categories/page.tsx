@@ -124,14 +124,14 @@ export default function StoryCategoriesList() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900">Story Categories</h1>
                     <p className="text-sm text-gray-500 mt-1">Manage categories for success stories directly influencing front-end filters.</p>
                 </div>
                 <Link
                     href="/dashboard/story-categories/create"
-                    className="flex items-center space-x-2 bg-[#023051] text-white px-4 py-2 rounded-lg hover:bg-[#023051]/90"
+                    className="flex items-center justify-center w-full sm:w-auto space-x-2 bg-[#023051] text-white px-4 py-2 rounded-lg hover:bg-[#023051]/90 shrink-0"
                 >
                     <Plus className="w-5 h-5" />
                     <span>Add Category</span>

@@ -457,15 +457,15 @@ export default function PlanForm({ id }: PlanFormProps) {
                         </div>
                     </div>
 
-                    <div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100 flex flex-col md:flex-row md:items-center gap-6">
+                    <div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100 flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
                         <div className="flex-1">
                             <h4 className="text-sm font-semibold text-gray-900">Plan Visibility & Highlighting</h4>
                             <p className="text-xs text-gray-500 mt-1">Control how this plan appears to users.</p>
                         </div>
-                        <div className="flex items-center gap-6">
-                            <label className="flex items-center space-x-3 cursor-pointer bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6">
+                            <label className="flex items-center justify-between sm:justify-start space-x-3 cursor-pointer bg-white px-4 py-3 sm:py-2 rounded-lg border border-gray-200 shadow-sm w-full sm:w-auto">
                                 <span className="text-sm font-medium text-gray-700">Active</span>
-                                <div className="relative">
+                                <div className="relative shrink-0">
                                     <input
                                         type="checkbox"
                                         className="sr-only peer"
@@ -475,9 +475,9 @@ export default function PlanForm({ id }: PlanFormProps) {
                                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#023051]"></div>
                                 </div>
                             </label>
-                            <label className="flex items-center space-x-3 cursor-pointer bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
+                            <label className="flex items-center justify-between sm:justify-start space-x-3 cursor-pointer bg-white px-4 py-3 sm:py-2 rounded-lg border border-gray-200 shadow-sm w-full sm:w-auto">
                                 <span className="text-sm font-medium text-gray-700">MOST POPULAR Badge</span>
-                                <div className="relative">
+                                <div className="relative shrink-0">
                                     <input
                                         type="checkbox"
                                         className="sr-only peer"

@@ -242,14 +242,14 @@ export default function StoryForm({ id }: StoryFormProps) {
                         </div>
 
                         <div className="md:col-span-2 space-y-3">
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
                                 <label className="block text-sm font-medium text-gray-700">
                                     Key Achievements *
                                 </label>
                                 <button
                                     type="button"
                                     onClick={addAchievement}
-                                    className="flex items-center text-sm text-[#023051] hover:text-[#023051]/80 font-medium"
+                                    className="flex items-center text-sm text-[#023051] hover:text-[#023051]/80 font-medium shrink-0"
                                 >
                                     <Plus className="w-4 h-4 mr-1" />
                                     Add Achievement
@@ -264,13 +264,17 @@ export default function StoryForm({ id }: StoryFormProps) {
                                             value={achievement}
                                             onChange={(e) => updateAchievement(index, e.target.value)}
                                             required={index === 0 && formData.achievements.length === 1}
-                                            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white placeholder:text-gray-400 focus:ring-2 focus:ring-[#023051] focus:border-[#023051] outline-none transition-colors"
+                                            className="flex-1 min-w-0 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white placeholder:text-gray-400 focus:ring-2 focus:ring-[#023051] focus:border-[#023051] outline-none transition-colors"
                                             placeholder="e.g., -12kg in 4 Months"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => removeAchievement(index)}
-                                            className="px-3 py-2 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-colors"
+                                            disabled={formData.achievements.length <= 1}
+                                            className={`px-3 py-2 border rounded-lg transition-colors shrink-0 ${formData.achievements.length <= 1
+                                                    ? 'text-gray-300 border-gray-200 bg-gray-50 cursor-not-allowed'
+                                                    : 'text-red-500 hover:bg-red-50 border-transparent hover:border-red-100'
+                                                }`}
                                         >
                                             <Trash2 className="w-5 h-5" />
                                         </button>

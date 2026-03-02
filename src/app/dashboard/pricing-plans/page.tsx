@@ -132,15 +132,14 @@ export default function PricingPlansList() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center space-x-4 mb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-0 mb-4 sm:mb-2">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900">Manage Pricing Plans</h1>
                     <p className="text-sm text-gray-500 mt-1">Configure pricing plans and assign them to durations.</p>
                 </div>
-                <div className="flex-1"></div>
                 <Link
                     href={`/dashboard/pricing-plans/create-plan`}
-                    className="flex items-center space-x-2 bg-[#023051] text-white px-4 py-2 rounded-lg hover:bg-[#023051]/90"
+                    className="flex items-center space-x-2 bg-[#023051] text-white px-4 py-2 rounded-lg hover:bg-[#023051]/90 w-full sm:w-auto justify-center sm:justify-start shrink-0"
                 >
                     <Plus className="w-5 h-5" />
                     <span>Add Plan</span>

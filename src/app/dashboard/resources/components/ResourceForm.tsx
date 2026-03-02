@@ -90,7 +90,7 @@ export default function ResourceForm({ id }: ResourceFormProps) {
             const data = new FormData();
             data.append('file', file);
 
-            const res = await axios.post('/curated-tracks/upload', data, {
+            const res = await axios.post('/programs/upload', data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
@@ -419,12 +419,12 @@ export default function ResourceForm({ id }: ResourceFormProps) {
 
                     {/* Steps Building Section */}
                     <div>
-                        <div className="flex justify-between items-center mb-4 border-b pb-2">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b pb-4 sm:pb-2 gap-4">
                             <h2 className="text-lg font-bold text-gray-900">Dynamic Steps Builder</h2>
                             <button
                                 type="button"
                                 onClick={addStep}
-                                className="flex items-center space-x-1 text-sm bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors"
+                                className="flex items-center space-x-1 text-sm bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors w-full sm:w-auto justify-center sm:justify-start"
                             >
                                 <Plus className="w-4 h-4" />
                                 <span>Add Step</span>
@@ -451,19 +451,16 @@ export default function ResourceForm({ id }: ResourceFormProps) {
                                         onDrop={(e) => handleDrop(e, index)}
                                         onDragEnd={handleDragEnd}
                                         className={`bg-gray-50 p-6 rounded-xl border relative group transition-colors ${dragOverStepIndex === index
-                                                ? 'border-blue-500 border-t-2 bg-blue-50/50'
-                                                : 'border-gray-200'
+                                            ? 'border-blue-500 border-t-2 bg-blue-50/50'
+                                            : 'border-gray-200'
                                             }`}
                                     >
 
                                         <div className="absolute top-4 right-4 flex items-center space-x-2">
-                                            <div className="cursor-grab active:cursor-grabbing p-1.5 text-gray-400 hover:text-gray-700 transition-colors hidden sm:block">
+                                            <div className="cursor-grab active:cursor-grabbing p-1.5 text-gray-400 hover:text-gray-700 transition-colors">
                                                 <GripVertical className="w-4 h-4" />
                                             </div>
-                                            <div className="w-px h-4 bg-gray-300 mx-1 hidden sm:block"></div>
-                                            <button type="button" onClick={() => moveStep(index, 'up')} disabled={index === 0} className="p-1.5 text-gray-400 hover:text-gray-700 disabled:opacity-30 sm:hidden"><GripVertical className="w-4 h-4" /></button>
-                                            <button type="button" onClick={() => moveStep(index, 'down')} disabled={index === formData.steps.length - 1} className="p-1.5 text-gray-400 hover:text-gray-700 disabled:opacity-30 sm:hidden"><GripVertical className="w-4 h-4" /></button>
-                                            <div className="w-px h-4 bg-gray-300 mx-1 sm:hidden"></div>
+                                            <div className="w-px h-4 bg-gray-300 mx-1"></div>
                                             <button type="button" onClick={() => removeStep(index)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-md transition-colors"><Trash2 className="w-4 h-4" /></button>
                                         </div>
 
@@ -504,13 +501,13 @@ export default function ResourceForm({ id }: ResourceFormProps) {
                                                                 required
                                                                 value={point}
                                                                 onChange={(e) => updateStepPoint(index, pIdx, e.target.value)}
-                                                                className="flex-1 px-3 py-1.5 border border-gray-300 rounded-md text-sm text-gray-900"
+                                                                className="flex-1 min-w-0 px-3 py-1.5 border border-gray-300 rounded-md text-sm text-gray-900"
                                                                 placeholder="Body metrics..."
                                                             />
                                                             <button
                                                                 type="button"
                                                                 onClick={() => removeStepPoint(index, pIdx)}
-                                                                className="text-gray-400 hover:text-red-500"
+                                                                className="text-gray-400 hover:text-red-500 shrink-0"
                                                                 disabled={(step.points || []).length <= 1}
                                                             >
                                                                 <XIcon className="w-4 h-4" />
@@ -573,25 +570,25 @@ export default function ResourceForm({ id }: ResourceFormProps) {
                         )}
                     </div>
 
-                    <div className="pt-6 border-t border-gray-100 flex justify-end space-x-4">
+                    <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
                         <button
                             type="button"
                             onClick={() => router.push('/dashboard/resources')}
-                            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors w-full sm:w-auto flex items-center justify-center shrink-0"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={loading || isUploadingImage}
-                            className="flex items-center space-x-2 bg-[#023051] text-white px-6 py-2 rounded-lg hover:bg-[#023051]/90 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="flex items-center justify-center space-x-2 bg-[#023051] text-white px-6 py-2 rounded-lg hover:bg-[#023051]/90 transition-colors disabled:opacity-70 disabled:cursor-not-allowed w-full sm:w-auto shrink-0"
                         >
                             {loading ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (
                                 <Save className="w-5 h-5" />
                             )}
-                            <span>{isEditing ? 'Update Resource' : 'Save Resource'}</span>
+                            <span className="whitespace-nowrap">{isEditing ? 'Update Resource' : 'Save Resource'}</span>
                         </button>
                     </div>
                 </form>

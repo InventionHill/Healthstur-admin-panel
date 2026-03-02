@@ -436,11 +436,11 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
             </div>
 
             {/* Tabs Navigation */}
-            <div className="flex border-b border-gray-200 mt-8 mb-6">
-                <button type="button" onClick={() => setActiveTab('home')} className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors duration-200 ${activeTab === 'home' ? 'border-[#023051] text-[#023051]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Home Page Hero</button>
-                <button type="button" onClick={() => setActiveTab('program')} className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors duration-200 ${activeTab === 'program' ? 'border-[#023051] text-[#023051]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Program Page Hero</button>
-                <button type="button" onClick={() => setActiveTab('solutions')} className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors duration-200 ${activeTab === 'solutions' ? 'border-[#023051] text-[#023051]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Program Solutions</button>
-                <button type="button" onClick={() => setActiveTab('curated')} className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors duration-200 ${activeTab === 'curated' ? 'border-[#023051] text-[#023051]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Curated Track</button>
+            <div className="flex border-b border-gray-200 mt-8 mb-6 overflow-x-auto whitespace-nowrap scrollbar-hide -mx-6 px-6 sm:mx-0 sm:px-0">
+                <button type="button" onClick={() => setActiveTab('home')} className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors duration-200 outline-none ${activeTab === 'home' ? 'border-[#023051] text-[#023051]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Home Page Hero</button>
+                <button type="button" onClick={() => setActiveTab('program')} className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors duration-200 outline-none ${activeTab === 'program' ? 'border-[#023051] text-[#023051]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Program Page Hero</button>
+                <button type="button" onClick={() => setActiveTab('solutions')} className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors duration-200 outline-none ${activeTab === 'solutions' ? 'border-[#023051] text-[#023051]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Program Solutions</button>
+                <button type="button" onClick={() => setActiveTab('curated')} className={`px-4 py-3 font-semibold text-sm border-b-2 transition-colors duration-200 outline-none ${activeTab === 'curated' ? 'border-[#023051] text-[#023051]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Curated Track</button>
             </div>
 
             {/* TAB CONTENT: HOME HERO */}
@@ -737,12 +737,12 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
             {/* TAB CONTENT: CURATED TRACK */}
             {activeTab === 'curated' && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
                         <div>
                             <h3 className="text-lg font-bold text-gray-900">Curated Track Settings</h3>
                             <p className="text-sm text-gray-500">Feature this program on the Home Page under "Our Curated Tracks".</p>
                         </div>
-                        <label className="flex items-center gap-2 cursor-pointer select-none shrink-0 py-2 border border-gray-200 px-3 rounded-lg bg-gray-50">
+                        <label className="flex items-center gap-2 cursor-pointer select-none shrink-0 py-2 border border-gray-200 px-3 rounded-lg bg-gray-50 w-full sm:w-auto mt-2 sm:mt-0 justify-between sm:justify-start">
                             <span className="text-sm font-medium text-gray-700">Enable as Curated Track</span>
                             <div className="relative">
                                 <input
@@ -881,17 +881,17 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                 </div>
             )}
 
-            <div className="pt-6 flex justify-end gap-3 border-t border-gray-100 mt-6">
+            <div className="pt-6 border-t border-gray-100 mt-6 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
                 <button
                     type="button"
                     onClick={() => router.push('/dashboard/programs')}
-                    className="px-6 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium"
+                    className="px-6 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors font-medium w-full sm:w-auto flex items-center justify-center shrink-0"
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
-                    className="px-6 py-2.5 text-white bg-primary hover:bg-primary-hover rounded-lg transition-colors shadow-sm font-medium"
+                    className="px-6 py-2.5 text-white bg-primary hover:bg-primary-hover rounded-lg transition-colors shadow-sm font-medium w-full sm:w-auto flex items-center justify-center shrink-0 whitespace-nowrap"
                 >
                     {initialData?.id ? 'Save Changes' : 'Create Program'}
                 </button>

@@ -119,18 +119,18 @@ export default function CategoryForm({ id }: CategoryFormProps) {
                         </div>
                     </div>
 
-                    <div className="pt-6 border-t border-gray-100 flex justify-end space-x-4">
+                    <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
                         <button
                             type="button"
                             onClick={() => router.push('/dashboard/story-categories')}
-                            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors w-full sm:w-auto flex items-center justify-center shrink-0"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex items-center space-x-2 bg-[#023051] text-white px-6 py-2 rounded-lg hover:bg-[#023051]/90 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="flex items-center justify-center space-x-2 bg-[#023051] text-white px-6 py-2 rounded-lg hover:bg-[#023051]/90 transition-colors disabled:opacity-70 disabled:cursor-not-allowed w-full sm:w-auto shrink-0 whitespace-nowrap"
                         >
                             {loading ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />

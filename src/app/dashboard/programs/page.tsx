@@ -183,14 +183,14 @@ export default function ProgramsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900">Programs</h1>
                     <p className="text-sm text-gray-500 mt-1">Manage programs for Hero and Navbar</p>
                 </div>
                 <Link
                     href="/dashboard/programs/create"
-                    className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors shadow-sm"
+                    className="flex items-center justify-center w-full sm:w-auto gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-hover transition-colors shadow-sm shrink-0"
                 >
                     <Plus className="w-4 h-4" />
                     Add Program

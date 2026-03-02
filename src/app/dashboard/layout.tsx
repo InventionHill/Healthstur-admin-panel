@@ -141,7 +141,7 @@ export default function DashboardLayout({
             {/* Main Content */}
             <div className={`flex-1 min-w-0 flex flex-col min-h-screen transition-all duration-300 bg-[#f8f9fa] ${isDesktopCollapsed ? 'md:pl-20' : 'md:pl-64'}`}>
                 {/* Header - Mobile & Search/Profile area */}
-                <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 sm:px-8 z-10 sticky top-0">
+                <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 sm:px-8 z-40 sticky top-0">
                     <div className="flex items-center md:hidden">
                         <button
                             onClick={() => setSidebarOpen(!isSidebarOpen)}
@@ -238,7 +238,7 @@ export default function DashboardLayout({
                 )}
 
                 {/* Main Content Area */}
-                <main className="flex-1 p-6 sm:p-8 overflow-auto">
+                <main className="flex-1 p-4 sm:p-8 overflow-x-hidden overflow-y-auto">
                     {children}
                 </main>
             </div>
