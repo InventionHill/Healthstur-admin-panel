@@ -97,10 +97,8 @@ export default function PlanForm({ id }: PlanFormProps) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
-    const [priceIndia, setPriceIndia] = useState('');
-    const [priceUsa, setPriceUsa] = useState('');
-    const [priceEurope, setPriceEurope] = useState('');
-    const [priceUk, setPriceUk] = useState('');
+    const [prices, setPrices] = useState<Record<string, string>>({});
+    const [activeCountries, setActiveCountries] = useState<any[]>([]);
     const [icon, setIcon] = useState('Star');
     const [buttonText, setButtonText] = useState('BUY NOW');
     const [image, setImage] = useState('');
@@ -109,7 +107,7 @@ export default function PlanForm({ id }: PlanFormProps) {
     const [features, setFeatures] = useState<string[]>(['']);
     const [support, setSupport] = useState<string[]>(['']);
     const [positioning, setPositioning] = useState<string[]>(['']);
-    const [errors, setErrors] = useState<{ price?: string; priceIndia?: string; priceUsa?: string; priceEurope?: string; priceUk?: string; image?: string;[key: string]: string | undefined }>({});
+    const [errors, setErrors] = useState<{ price?: string; image?: string;[key: string]: string | undefined }>({});
 
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
@@ -125,6 +123,10 @@ export default function PlanForm({ id }: PlanFormProps) {
                 const durationsDesc = durationsRes.data;
                 setDurations(durationsDesc);
 
+                // Fetch active countries
+                const countriesRes = await axios.get('/countries/active');
+                setActiveCountries(countriesRes.data);
+
                 if (!id && durationsDesc.length > 0) {
                     setDurationId(durationsDesc[0].id);
                 }
@@ -137,10 +139,18 @@ export default function PlanForm({ id }: PlanFormProps) {
                     setName(data.name);
                     setDescription(data.description);
                     setPrice(data.price);
-                    setPriceIndia(data.priceIndia || '');
-                    setPriceUsa(data.priceUsa || '');
-                    setPriceEurope(data.priceEurope || '');
-                    setPriceUk(data.priceUk || '');
+
+                    // Parse prices JSON if exists
+                    try {
+                        let parsedPrices = data.prices;
+                        if (typeof parsedPrices === 'string') {
+                            parsedPrices = JSON.parse(parsedPrices);
+                        }
+                        setPrices(parsedPrices || {});
+                    } catch (e) {
+                        setPrices({});
+                    }
+
                     setIcon(data.icon);
                     setButtonText(data.buttonText);
                     setImage(data.image);
@@ -204,18 +214,13 @@ export default function PlanForm({ id }: PlanFormProps) {
         if (!price || isNaN(Number(price))) {
             newErrors.price = 'Price must be a valid number';
         }
-        if (!priceIndia || isNaN(Number(priceIndia))) {
-            newErrors.priceIndia = 'Price (India) must be a valid number';
-        }
-        if (!priceUsa || isNaN(Number(priceUsa))) {
-            newErrors.priceUsa = 'Price (USA) must be a valid number';
-        }
-        if (!priceEurope || isNaN(Number(priceEurope))) {
-            newErrors.priceEurope = 'Price (Europe) must be a valid number';
-        }
-        if (!priceUk || isNaN(Number(priceUk))) {
-            newErrors.priceUk = 'Price (UK) must be a valid number';
-        }
+
+        activeCountries.forEach(country => {
+            const countryPrice = prices[country.id];
+            if (!countryPrice || isNaN(Number(countryPrice))) {
+                newErrors[`price_${country.id}`] = `Price (${country.name}) must be a valid number`;
+            }
+        });
 
         if (!image) {
             newErrors.image = 'Background image is required';
@@ -255,10 +260,7 @@ export default function PlanForm({ id }: PlanFormProps) {
             name,
             description,
             price,
-            priceIndia,
-            priceUsa,
-            priceEurope,
-            priceUk,
+            prices,
             icon,
             buttonText,
             image,
@@ -355,7 +357,7 @@ export default function PlanForm({ id }: PlanFormProps) {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Price (Monthly, Fallback)
@@ -373,74 +375,29 @@ export default function PlanForm({ id }: PlanFormProps) {
                             />
                             {errors.price && <p className="mt-1 text-xs text-red-500 font-medium">{errors.price}</p>}
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Price (India)
-                            </label>
-                            <input
-                                type="text"
-                                required
-                                value={priceIndia}
-                                onChange={(e) => {
-                                    setPriceIndia(e.target.value);
-                                    if (errors.priceIndia) setErrors(prev => ({ ...prev, priceIndia: undefined }));
-                                }}
-                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#023051] focus:border-transparent outline-none transition-all text-gray-900 ${errors.priceIndia ? 'border-red-500 bg-red-50/30' : 'border-gray-300'}`}
-                                placeholder="e.g. 800"
-                            />
-                            {errors.priceIndia && <p className="mt-1 text-xs text-red-500 font-medium">{errors.priceIndia}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Price (USA)
-                            </label>
-                            <input
-                                type="text"
-                                required
-                                value={priceUsa}
-                                onChange={(e) => {
-                                    setPriceUsa(e.target.value);
-                                    if (errors.priceUsa) setErrors(prev => ({ ...prev, priceUsa: undefined }));
-                                }}
-                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#023051] focus:border-transparent outline-none transition-all text-gray-900 ${errors.priceUsa ? 'border-red-500 bg-red-50/30' : 'border-gray-300'}`}
-                                placeholder="e.g. 10"
-                            />
-                            {errors.priceUsa && <p className="mt-1 text-xs text-red-500 font-medium">{errors.priceUsa}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Price (Europe)
-                            </label>
-                            <input
-                                type="text"
-                                required
-                                value={priceEurope}
-                                onChange={(e) => {
-                                    setPriceEurope(e.target.value);
-                                    if (errors.priceEurope) setErrors(prev => ({ ...prev, priceEurope: undefined }));
-                                }}
-                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#023051] focus:border-transparent outline-none transition-all text-gray-900 ${errors.priceEurope ? 'border-red-500 bg-red-50/30' : 'border-gray-300'}`}
-                                placeholder="e.g. 10"
-                            />
-                            {errors.priceEurope && <p className="mt-1 text-xs text-red-500 font-medium">{errors.priceEurope}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Price (UK)
-                            </label>
-                            <input
-                                type="text"
-                                required
-                                value={priceUk}
-                                onChange={(e) => {
-                                    setPriceUk(e.target.value);
-                                    if (errors.priceUk) setErrors(prev => ({ ...prev, priceUk: undefined }));
-                                }}
-                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#023051] focus:border-transparent outline-none transition-all text-gray-900 ${errors.priceUk ? 'border-red-500 bg-red-50/30' : 'border-gray-300'}`}
-                                placeholder="e.g. 10"
-                            />
-                            {errors.priceUk && <p className="mt-1 text-xs text-red-500 font-medium">{errors.priceUk}</p>}
-                        </div>
+                        {activeCountries.map(country => (
+                            <div key={country.id}>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Price ({country.name})
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={prices[country.id] || ''}
+                                    onChange={(e) => {
+                                        setPrices(prev => ({ ...prev, [country.id]: e.target.value }));
+                                        if (errors[`price_${country.id}`]) {
+                                            const newErrors = { ...errors };
+                                            delete newErrors[`price_${country.id}`];
+                                            setErrors(newErrors);
+                                        }
+                                    }}
+                                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#023051] focus:border-transparent outline-none transition-all text-gray-900 ${errors[`price_${country.id}`] ? 'border-red-500 bg-red-50/30' : 'border-gray-300'}`}
+                                    placeholder={`e.g. ${country.currencySymbol}99`}
+                                />
+                                {errors[`price_${country.id}`] && <p className="mt-1 text-xs text-red-500 font-medium">{errors[`price_${country.id}`]}</p>}
+                            </div>
+                        ))}
                     </div>
 
                     <div>

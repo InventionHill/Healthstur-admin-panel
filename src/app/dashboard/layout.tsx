@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Building2, LayoutDashboard, Users, UserCog, CalendarDays, Wallet, Settings, Menu, X, LogOut, CheckSquare, Bell, FileQuestion, Map, Layers, Star, BookOpen, Activity, ChevronLeft, ChevronRight, MessageSquare, ClipboardList, MessageCircle, ShieldCheck, Lock, FileText, Trophy, Tags } from 'lucide-react';
+import { Building2, LayoutDashboard, Users, UserCog, CalendarDays, Wallet, Settings, Menu, X, LogOut, CheckSquare, Bell, FileQuestion, Map, Layers, Star, BookOpen, Activity, ChevronLeft, ChevronRight, MessageSquare, ClipboardList, MessageCircle, ShieldCheck, Lock, FileText, Trophy, Tags, Globe } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import axios from '@/lib/axios';
 
@@ -63,6 +63,7 @@ export default function DashboardLayout({
         { name: 'Story Categories', href: '/dashboard/story-categories', icon: Tags },
         { name: 'FAQ', href: '/dashboard/faq', icon: FileQuestion },
         { name: 'Services', href: '/dashboard/services', icon: Activity },
+        { name: 'Countries', href: '/dashboard/countries', icon: Globe },
         { name: 'Pricing Durations', href: '/dashboard/pricing', icon: CalendarDays },
         { name: 'Pricing Plans', href: '/dashboard/pricing-plans', icon: Wallet },
         { name: 'Consultations', href: '/dashboard/consultations', icon: MessageSquare },
@@ -95,7 +96,7 @@ export default function DashboardLayout({
                     </button>
                 </div>
 
-                <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto overflow-x-hidden">
+                <nav className="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto overflow-x-hidden custom-scrollbar">
                     {navItems.map((item) => {
                         const isActive = item.href === '/dashboard' ? pathname === '/dashboard' : pathname === item.href || pathname?.startsWith(`${item.href}/`);
                         return (
@@ -199,7 +200,7 @@ export default function DashboardLayout({
                                     <X className="h-6 w-6" />
                                 </button>
                             </div>
-                            <div className="mt-5 flex-1 h-0 overflow-y-auto">
+                            <div className="mt-5 flex-1 h-0 overflow-y-auto custom-scrollbar">
                                 <nav className="px-2 space-y-1">
                                     {navItems.map((item) => {
                                         const isActive = item.href === '/dashboard' ? pathname === '/dashboard' : pathname === item.href || pathname?.startsWith(`${item.href}/`);

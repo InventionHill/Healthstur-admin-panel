@@ -17,21 +17,7 @@ interface Solution {
     approach: string;
     benefits: string;
     focusOn?: string[];
-    priceIndia?: string;
-    priceUsa?: string;
-    priceEurope?: string;
-    price4WeekIndia?: string;
-    price8WeekIndia?: string;
-    price12WeekIndia?: string;
-    price4WeekUsa?: string;
-    price8WeekUsa?: string;
-    price12WeekUsa?: string;
-    price4WeekEurope?: string;
-    price8WeekEurope?: string;
-    price12WeekEurope?: string;
-    price4WeekUk?: string;
-    price8WeekUk?: string;
-    price12WeekUk?: string;
+    prices?: Record<string, { price4Week: string; price8Week: string; price12Week: string }>;
     image: string;
     isActive?: boolean;
 }
@@ -111,12 +97,10 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
     const [solutionsList, setSolutionsList] = useState<Solution[]>(safeInitialSolutions as Solution[]);
     const [currentSolution, setCurrentSolution] = useState<Solution>({
         id: '', title: '', description: '', approach: '', benefits: '', focusOn: [''],
-        price4WeekIndia: '', price8WeekIndia: '', price12WeekIndia: '',
-        price4WeekUsa: '', price8WeekUsa: '', price12WeekUsa: '',
-        price4WeekEurope: '', price8WeekEurope: '', price12WeekEurope: '',
-        price4WeekUk: '', price8WeekUk: '', price12WeekUk: '',
+        prices: {},
         image: '', isActive: true
     });
+    const [activeCountries, setActiveCountries] = useState<any[]>([]);
     const [isUploadingSolutionImage, setIsUploadingSolutionImage] = useState(false);
     const [isEditingSolution, setIsEditingSolution] = useState(false);
 
@@ -137,6 +121,18 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
             setFormData(prev => ({ ...prev, href: slug }));
         }
     }, [formData.name, isManualSlug]);
+
+    useEffect(() => {
+        const fetchCountries = async () => {
+            try {
+                const res = await axios.get('/countries/active');
+                setActiveCountries(res.data);
+            } catch (error) {
+                console.error('Failed to fetch active countries:', error);
+            }
+        };
+        fetchCountries();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -289,21 +285,12 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
         const validFocusOn = currentSolution.focusOn?.filter((b: string) => b.trim() !== '') || [];
         if (validFocusOn.length === 0) { setApiError('At least one valid Focus On item is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
 
-        if (!currentSolution.price4WeekIndia?.trim()) { setApiError('4 Week Price (India) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-        if (!currentSolution.price8WeekIndia?.trim()) { setApiError('8 Week Price (India) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-        if (!currentSolution.price12WeekIndia?.trim()) { setApiError('12 Week Price (India) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-
-        if (!currentSolution.price4WeekUsa?.trim()) { setApiError('4 Week Price (USA) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-        if (!currentSolution.price8WeekUsa?.trim()) { setApiError('8 Week Price (USA) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-        if (!currentSolution.price12WeekUsa?.trim()) { setApiError('12 Week Price (USA) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-
-        if (!currentSolution.price4WeekEurope?.trim()) { setApiError('4 Week Price (Europe) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-        if (!currentSolution.price8WeekEurope?.trim()) { setApiError('8 Week Price (Europe) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-        if (!currentSolution.price12WeekEurope?.trim()) { setApiError('12 Week Price (Europe) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-
-        if (!currentSolution.price4WeekUk?.trim()) { setApiError('4 Week Price (UK) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-        if (!currentSolution.price8WeekUk?.trim()) { setApiError('8 Week Price (UK) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-        if (!currentSolution.price12WeekUk?.trim()) { setApiError('12 Week Price (UK) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        for (const country of activeCountries) {
+            const countryPrices = currentSolution.prices?.[country.id];
+            if (!countryPrices?.price4Week?.trim()) { setApiError(`4 Week Price (${country.name}) is required`); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+            if (!countryPrices?.price8Week?.trim()) { setApiError(`8 Week Price (${country.name}) is required`); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+            if (!countryPrices?.price12Week?.trim()) { setApiError(`12 Week Price (${country.name}) is required`); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        }
 
         if (!currentSolution.image) { setApiError('Solution Image is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
 
@@ -317,10 +304,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
         }
         setCurrentSolution({
             id: '', title: '', description: '', approach: '', benefits: '', focusOn: [''],
-            price4WeekIndia: '', price8WeekIndia: '', price12WeekIndia: '',
-            price4WeekUsa: '', price8WeekUsa: '', price12WeekUsa: '',
-            price4WeekEurope: '', price8WeekEurope: '', price12WeekEurope: '',
-            price4WeekUk: '', price8WeekUk: '', price12WeekUk: '',
+            prices: {},
             image: '', isActive: true
         });
         setIsEditingSolution(false);
@@ -748,77 +732,70 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                                     </div>
                                 </div>
 
-                                <div>
-                                    <h5 className="text-sm font-semibold text-gray-800 border-b pb-1 mb-3">India Pricing (₹)</h5>
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">4 Week Price</label>
-                                            <input value={currentSolution.price4WeekIndia || ''} onChange={e => setCurrentSolution(p => ({ ...p, price4WeekIndia: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. ₹1,499" />
+                                {activeCountries.map(country => {
+                                    const currentPrices = currentSolution.prices?.[country.id] || { price4Week: '', price8Week: '', price12Week: '' };
+                                    return (
+                                        <div key={country.id}>
+                                            <h5 className="text-sm font-semibold text-gray-800 border-b pb-1 mb-3 mt-4">{country.name} Pricing ({country.currencySymbol})</h5>
+                                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                                <div>
+                                                    <label className="block text-xs font-medium text-gray-700 mb-1">4 Week Price</label>
+                                                    <input
+                                                        value={currentPrices.price4Week}
+                                                        onChange={e => setCurrentSolution(p => ({
+                                                            ...p,
+                                                            prices: {
+                                                                ...(p.prices || {}),
+                                                                [country.id]: {
+                                                                    ...(p.prices?.[country.id] || { price4Week: '', price8Week: '', price12Week: '' }),
+                                                                    price4Week: e.target.value
+                                                                }
+                                                            }
+                                                        }))}
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white"
+                                                        placeholder={`e.g. ${country.currencySymbol}19`}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-medium text-gray-700 mb-1">8 Week Price</label>
+                                                    <input
+                                                        value={currentPrices.price8Week}
+                                                        onChange={e => setCurrentSolution(p => ({
+                                                            ...p,
+                                                            prices: {
+                                                                ...(p.prices || {}),
+                                                                [country.id]: {
+                                                                    ...(p.prices?.[country.id] || { price4Week: '', price8Week: '', price12Week: '' }),
+                                                                    price8Week: e.target.value
+                                                                }
+                                                            }
+                                                        }))}
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white"
+                                                        placeholder={`e.g. ${country.currencySymbol}35`}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-medium text-gray-700 mb-1">12 Week Price</label>
+                                                    <input
+                                                        value={currentPrices.price12Week}
+                                                        onChange={e => setCurrentSolution(p => ({
+                                                            ...p,
+                                                            prices: {
+                                                                ...(p.prices || {}),
+                                                                [country.id]: {
+                                                                    ...(p.prices?.[country.id] || { price4Week: '', price8Week: '', price12Week: '' }),
+                                                                    price12Week: e.target.value
+                                                                }
+                                                            }
+                                                        }))}
+                                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white"
+                                                        placeholder={`e.g. ${country.currencySymbol}49`}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">8 Week Price</label>
-                                            <input value={currentSolution.price8WeekIndia || ''} onChange={e => setCurrentSolution(p => ({ ...p, price8WeekIndia: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. ₹2,799" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">12 Week Price</label>
-                                            <input value={currentSolution.price12WeekIndia || ''} onChange={e => setCurrentSolution(p => ({ ...p, price12WeekIndia: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. ₹4,999" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <h5 className="text-sm font-semibold text-gray-800 border-b pb-1 mb-3 mt-4">USA Pricing ($)</h5>
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">4 Week Price</label>
-                                            <input value={currentSolution.price4WeekUsa || ''} onChange={e => setCurrentSolution(p => ({ ...p, price4WeekUsa: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. $19" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">8 Week Price</label>
-                                            <input value={currentSolution.price8WeekUsa || ''} onChange={e => setCurrentSolution(p => ({ ...p, price8WeekUsa: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. $35" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">12 Week Price</label>
-                                            <input value={currentSolution.price12WeekUsa || ''} onChange={e => setCurrentSolution(p => ({ ...p, price12WeekUsa: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. $49" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <h5 className="text-sm font-semibold text-gray-800 border-b pb-1 mb-3 mt-4">Europe Pricing (€)</h5>
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">4 Week Price</label>
-                                            <input value={currentSolution.price4WeekEurope || ''} onChange={e => setCurrentSolution(p => ({ ...p, price4WeekEurope: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. €19" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">8 Week Price</label>
-                                            <input value={currentSolution.price8WeekEurope || ''} onChange={e => setCurrentSolution(p => ({ ...p, price8WeekEurope: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. €35" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">12 Week Price</label>
-                                            <input value={currentSolution.price12WeekEurope || ''} onChange={e => setCurrentSolution(p => ({ ...p, price12WeekEurope: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. €49" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <h5 className="text-sm font-semibold text-gray-800 border-b pb-1 mb-3 mt-4">UK Pricing (£)</h5>
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">4 Week Price</label>
-                                            <input value={currentSolution.price4WeekUk || ''} onChange={e => setCurrentSolution(p => ({ ...p, price4WeekUk: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. £15" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">8 Week Price</label>
-                                            <input value={currentSolution.price8WeekUk || ''} onChange={e => setCurrentSolution(p => ({ ...p, price8WeekUk: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. £29" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">12 Week Price</label>
-                                            <input value={currentSolution.price12WeekUk || ''} onChange={e => setCurrentSolution(p => ({ ...p, price12WeekUk: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. £45" />
-                                        </div>
-                                    </div>
-                                </div>
+                                    );
+                                })}
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
