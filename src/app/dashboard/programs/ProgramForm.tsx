@@ -16,9 +16,22 @@ interface Solution {
     description: string;
     approach: string;
     benefits: string;
+    focusOn?: string[];
     priceIndia?: string;
     priceUsa?: string;
     priceEurope?: string;
+    price4WeekIndia?: string;
+    price8WeekIndia?: string;
+    price12WeekIndia?: string;
+    price4WeekUsa?: string;
+    price8WeekUsa?: string;
+    price12WeekUsa?: string;
+    price4WeekEurope?: string;
+    price8WeekEurope?: string;
+    price12WeekEurope?: string;
+    price4WeekUk?: string;
+    price8WeekUk?: string;
+    price12WeekUk?: string;
     image: string;
     isActive?: boolean;
 }
@@ -96,7 +109,14 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
         : [];
 
     const [solutionsList, setSolutionsList] = useState<Solution[]>(safeInitialSolutions as Solution[]);
-    const [currentSolution, setCurrentSolution] = useState<Solution>({ id: '', title: '', description: '', approach: '', benefits: '', priceIndia: '', priceUsa: '', priceEurope: '', image: '', isActive: true });
+    const [currentSolution, setCurrentSolution] = useState<Solution>({
+        id: '', title: '', description: '', approach: '', benefits: '', focusOn: [''],
+        price4WeekIndia: '', price8WeekIndia: '', price12WeekIndia: '',
+        price4WeekUsa: '', price8WeekUsa: '', price12WeekUsa: '',
+        price4WeekEurope: '', price8WeekEurope: '', price12WeekEurope: '',
+        price4WeekUk: '', price8WeekUk: '', price12WeekUk: '',
+        image: '', isActive: true
+    });
     const [isUploadingSolutionImage, setIsUploadingSolutionImage] = useState(false);
     const [isEditingSolution, setIsEditingSolution] = useState(false);
 
@@ -105,6 +125,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
     const [iconSearchQuery, setIconSearchQuery] = useState('');
     const [draggedBulletIndex, setDraggedBulletIndex] = useState<number | null>(null);
     const [draggedSolutionIndex, setDraggedSolutionIndex] = useState<number | null>(null);
+    const [draggedFocusOnIndex, setDraggedFocusOnIndex] = useState<number | null>(null);
 
     useEffect(() => {
         if (!isManualSlug && formData.name) {
@@ -264,18 +285,44 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
         if (!currentSolution.description.trim()) { setApiError('Description is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
         if (!currentSolution.approach.trim()) { setApiError('Approach is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
         if (!currentSolution.benefits.trim()) { setApiError('Benefits is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-        if (!currentSolution.priceIndia?.trim()) { setApiError('Price (India) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-        if (!currentSolution.priceUsa?.trim()) { setApiError('Price (USA) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
-        if (!currentSolution.priceEurope?.trim()) { setApiError('Price (Europe) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+
+        const validFocusOn = currentSolution.focusOn?.filter((b: string) => b.trim() !== '') || [];
+        if (validFocusOn.length === 0) { setApiError('At least one valid Focus On item is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+
+        if (!currentSolution.price4WeekIndia?.trim()) { setApiError('4 Week Price (India) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.price8WeekIndia?.trim()) { setApiError('8 Week Price (India) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.price12WeekIndia?.trim()) { setApiError('12 Week Price (India) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+
+        if (!currentSolution.price4WeekUsa?.trim()) { setApiError('4 Week Price (USA) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.price8WeekUsa?.trim()) { setApiError('8 Week Price (USA) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.price12WeekUsa?.trim()) { setApiError('12 Week Price (USA) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+
+        if (!currentSolution.price4WeekEurope?.trim()) { setApiError('4 Week Price (Europe) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.price8WeekEurope?.trim()) { setApiError('8 Week Price (Europe) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.price12WeekEurope?.trim()) { setApiError('12 Week Price (Europe) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+
+        if (!currentSolution.price4WeekUk?.trim()) { setApiError('4 Week Price (UK) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.price8WeekUk?.trim()) { setApiError('8 Week Price (UK) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+        if (!currentSolution.price12WeekUk?.trim()) { setApiError('12 Week Price (UK) is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+
         if (!currentSolution.image) { setApiError('Solution Image is required'); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
 
+        let finalSolution = { ...currentSolution };
         if (isEditingSolution && currentSolution.id) {
-            setSolutionsList(prev => prev.map(s => s.id === currentSolution.id ? currentSolution : s));
+            finalSolution.focusOn = finalSolution.focusOn?.filter(f => f.trim() !== '');
+            setSolutionsList(prev => prev.map(s => s.id === currentSolution.id ? finalSolution : s));
         } else {
-            const newSolution = { ...currentSolution, id: Date.now().toString() };
-            setSolutionsList(prev => [...prev, newSolution]);
+            finalSolution = { ...finalSolution, id: Date.now().toString(), focusOn: finalSolution.focusOn?.filter(f => f.trim() !== '') };
+            setSolutionsList(prev => [...prev, finalSolution]);
         }
-        setCurrentSolution({ id: '', title: '', description: '', approach: '', benefits: '', priceIndia: '', priceUsa: '', priceEurope: '', image: '', isActive: true });
+        setCurrentSolution({
+            id: '', title: '', description: '', approach: '', benefits: '', focusOn: [''],
+            price4WeekIndia: '', price8WeekIndia: '', price12WeekIndia: '',
+            price4WeekUsa: '', price8WeekUsa: '', price12WeekUsa: '',
+            price4WeekEurope: '', price8WeekEurope: '', price12WeekEurope: '',
+            price4WeekUk: '', price8WeekUk: '', price12WeekUk: '',
+            image: '', isActive: true
+        });
         setIsEditingSolution(false);
     };
 
@@ -620,27 +667,156 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                             </div>
 
                             <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Approach (Healthstur's Approach)</label>
-                                    <textarea rows={2} value={currentSolution.approach} onChange={e => setCurrentSolution(p => ({ ...p, approach: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Approach (Healthstur's Approach)</label>
+                                        <textarea rows={2} value={currentSolution.approach} onChange={e => setCurrentSolution(p => ({ ...p, approach: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Benefits (Results)</label>
+                                        <textarea rows={2} value={currentSolution.benefits} onChange={e => setCurrentSolution(p => ({ ...p, benefits: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" />
+                                    </div>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Benefits (Results)</label>
-                                    <textarea rows={2} value={currentSolution.benefits} onChange={e => setCurrentSolution(p => ({ ...p, benefits: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" />
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Focus On (For Modal Checklist)</label>
+                                    <div className="space-y-3">
+                                        {(currentSolution.focusOn || ['']).map((item: string, index: number) => (
+                                            <div
+                                                key={index}
+                                                className={`flex gap-2 items-center p-1 rounded-lg transition-colors border border-transparent ${draggedFocusOnIndex === index ? 'opacity-50 bg-gray-50 border-gray-200 border-dashed' : 'hover:bg-gray-50'}`}
+                                                draggable
+                                                onDragStart={(e) => {
+                                                    setDraggedFocusOnIndex(index);
+                                                    e.dataTransfer.effectAllowed = "move";
+                                                }}
+                                                onDragOver={(e) => {
+                                                    e.preventDefault();
+                                                    e.dataTransfer.dropEffect = "move";
+                                                }}
+                                                onDrop={(e) => {
+                                                    e.preventDefault();
+                                                    if (draggedFocusOnIndex === null || draggedFocusOnIndex === index) return;
+                                                    const newFocusOn = [...(currentSolution.focusOn || [''])];
+                                                    const draggedItem = newFocusOn[draggedFocusOnIndex];
+                                                    newFocusOn.splice(draggedFocusOnIndex, 1);
+                                                    newFocusOn.splice(index, 0, draggedItem);
+                                                    setCurrentSolution({ ...currentSolution, focusOn: newFocusOn });
+                                                    setDraggedFocusOnIndex(null);
+                                                }}
+                                                onDragEnd={() => setDraggedFocusOnIndex(null)}
+                                            >
+                                                <div className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 px-1 py-2 flex items-center justify-center">
+                                                    <LucideIcons.GripVertical className="w-5 h-5" />
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    value={item}
+                                                    onChange={(e) => {
+                                                        const newFocusOn = [...(currentSolution.focusOn || [''])];
+                                                        newFocusOn[index] = e.target.value;
+                                                        setCurrentSolution({ ...currentSolution, focusOn: newFocusOn });
+                                                    }}
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white shadow-sm"
+                                                    placeholder={`Checklist Item ${index + 1}`}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const currentList = currentSolution.focusOn || [''];
+                                                        if (currentList.length <= 1) return;
+                                                        const newFocusOn = currentList.filter((_: any, i: number) => i !== index);
+                                                        setCurrentSolution({ ...currentSolution, focusOn: newFocusOn });
+                                                    }}
+                                                    disabled={(currentSolution.focusOn || ['']).length <= 1}
+                                                    className={`px-3 py-2 rounded-lg transition-colors border shadow-sm ${(currentSolution.focusOn || ['']).length <= 1
+                                                        ? 'border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed'
+                                                        : 'border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300'
+                                                        }`}
+                                                    title={(currentSolution.focusOn || ['']).length <= 1 ? "Minimum one item required" : "Remove Item"}
+                                                >
+                                                    <Trash2 className="w-5 h-5" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                        <button
+                                            type="button"
+                                            onClick={() => setCurrentSolution({ ...currentSolution, focusOn: [...(currentSolution.focusOn || ['']), ''] })}
+                                            className="mt-3 px-4 py-2 border border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-gray-400 text-gray-600 rounded-lg transition-colors font-medium text-sm flex items-center justify-center gap-2 w-full"
+                                        >
+                                            <Plus className="w-4 h-4" /> Add Another Item
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (India)</label>
-                                        <input value={currentSolution.priceIndia || ''} onChange={e => setCurrentSolution(p => ({ ...p, priceIndia: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. ₹800 per 4 week" />
+                                <div>
+                                    <h5 className="text-sm font-semibold text-gray-800 border-b pb-1 mb-3">India Pricing (₹)</h5>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">4 Week Price</label>
+                                            <input value={currentSolution.price4WeekIndia || ''} onChange={e => setCurrentSolution(p => ({ ...p, price4WeekIndia: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. ₹1,499" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">8 Week Price</label>
+                                            <input value={currentSolution.price8WeekIndia || ''} onChange={e => setCurrentSolution(p => ({ ...p, price8WeekIndia: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. ₹2,799" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">12 Week Price</label>
+                                            <input value={currentSolution.price12WeekIndia || ''} onChange={e => setCurrentSolution(p => ({ ...p, price12WeekIndia: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. ₹4,999" />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (USA)</label>
-                                        <input value={currentSolution.priceUsa || ''} onChange={e => setCurrentSolution(p => ({ ...p, priceUsa: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. $10 per 4 week" />
+                                </div>
+
+                                <div>
+                                    <h5 className="text-sm font-semibold text-gray-800 border-b pb-1 mb-3 mt-4">USA Pricing ($)</h5>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">4 Week Price</label>
+                                            <input value={currentSolution.price4WeekUsa || ''} onChange={e => setCurrentSolution(p => ({ ...p, price4WeekUsa: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. $19" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">8 Week Price</label>
+                                            <input value={currentSolution.price8WeekUsa || ''} onChange={e => setCurrentSolution(p => ({ ...p, price8WeekUsa: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. $35" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">12 Week Price</label>
+                                            <input value={currentSolution.price12WeekUsa || ''} onChange={e => setCurrentSolution(p => ({ ...p, price12WeekUsa: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. $49" />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (Europe)</label>
-                                        <input value={currentSolution.priceEurope || ''} onChange={e => setCurrentSolution(p => ({ ...p, priceEurope: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. €10 per 4 week" />
+                                </div>
+
+                                <div>
+                                    <h5 className="text-sm font-semibold text-gray-800 border-b pb-1 mb-3 mt-4">Europe Pricing (€)</h5>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">4 Week Price</label>
+                                            <input value={currentSolution.price4WeekEurope || ''} onChange={e => setCurrentSolution(p => ({ ...p, price4WeekEurope: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. €19" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">8 Week Price</label>
+                                            <input value={currentSolution.price8WeekEurope || ''} onChange={e => setCurrentSolution(p => ({ ...p, price8WeekEurope: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. €35" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">12 Week Price</label>
+                                            <input value={currentSolution.price12WeekEurope || ''} onChange={e => setCurrentSolution(p => ({ ...p, price12WeekEurope: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. €49" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h5 className="text-sm font-semibold text-gray-800 border-b pb-1 mb-3 mt-4">UK Pricing (£)</h5>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">4 Week Price</label>
+                                            <input value={currentSolution.price4WeekUk || ''} onChange={e => setCurrentSolution(p => ({ ...p, price4WeekUk: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. £15" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">8 Week Price</label>
+                                            <input value={currentSolution.price8WeekUk || ''} onChange={e => setCurrentSolution(p => ({ ...p, price8WeekUk: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. £29" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-gray-700 mb-1">12 Week Price</label>
+                                            <input value={currentSolution.price12WeekUk || ''} onChange={e => setCurrentSolution(p => ({ ...p, price12WeekUk: e.target.value }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white" placeholder="e.g. £45" />
+                                        </div>
                                     </div>
                                 </div>
 

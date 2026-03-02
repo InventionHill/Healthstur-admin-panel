@@ -100,6 +100,7 @@ export default function PlanForm({ id }: PlanFormProps) {
     const [priceIndia, setPriceIndia] = useState('');
     const [priceUsa, setPriceUsa] = useState('');
     const [priceEurope, setPriceEurope] = useState('');
+    const [priceUk, setPriceUk] = useState('');
     const [icon, setIcon] = useState('Star');
     const [buttonText, setButtonText] = useState('BUY NOW');
     const [image, setImage] = useState('');
@@ -108,7 +109,7 @@ export default function PlanForm({ id }: PlanFormProps) {
     const [features, setFeatures] = useState<string[]>(['']);
     const [support, setSupport] = useState<string[]>(['']);
     const [positioning, setPositioning] = useState<string[]>(['']);
-    const [errors, setErrors] = useState<{ price?: string; priceIndia?: string; priceUsa?: string; priceEurope?: string; image?: string;[key: string]: string | undefined }>({});
+    const [errors, setErrors] = useState<{ price?: string; priceIndia?: string; priceUsa?: string; priceEurope?: string; priceUk?: string; image?: string;[key: string]: string | undefined }>({});
 
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
@@ -139,6 +140,7 @@ export default function PlanForm({ id }: PlanFormProps) {
                     setPriceIndia(data.priceIndia || '');
                     setPriceUsa(data.priceUsa || '');
                     setPriceEurope(data.priceEurope || '');
+                    setPriceUk(data.priceUk || '');
                     setIcon(data.icon);
                     setButtonText(data.buttonText);
                     setImage(data.image);
@@ -211,6 +213,9 @@ export default function PlanForm({ id }: PlanFormProps) {
         if (!priceEurope || isNaN(Number(priceEurope))) {
             newErrors.priceEurope = 'Price (Europe) must be a valid number';
         }
+        if (!priceUk || isNaN(Number(priceUk))) {
+            newErrors.priceUk = 'Price (UK) must be a valid number';
+        }
 
         if (!image) {
             newErrors.image = 'Background image is required';
@@ -253,6 +258,7 @@ export default function PlanForm({ id }: PlanFormProps) {
             priceIndia,
             priceUsa,
             priceEurope,
+            priceUk,
             icon,
             buttonText,
             image,
@@ -349,7 +355,7 @@ export default function PlanForm({ id }: PlanFormProps) {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Price (Monthly, Fallback)
@@ -417,6 +423,23 @@ export default function PlanForm({ id }: PlanFormProps) {
                                 placeholder="e.g. 10"
                             />
                             {errors.priceEurope && <p className="mt-1 text-xs text-red-500 font-medium">{errors.priceEurope}</p>}
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Price (UK)
+                            </label>
+                            <input
+                                type="text"
+                                required
+                                value={priceUk}
+                                onChange={(e) => {
+                                    setPriceUk(e.target.value);
+                                    if (errors.priceUk) setErrors(prev => ({ ...prev, priceUk: undefined }));
+                                }}
+                                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#023051] focus:border-transparent outline-none transition-all text-gray-900 ${errors.priceUk ? 'border-red-500 bg-red-50/30' : 'border-gray-300'}`}
+                                placeholder="e.g. 10"
+                            />
+                            {errors.priceUk && <p className="mt-1 text-xs text-red-500 font-medium">{errors.priceUk}</p>}
                         </div>
                     </div>
 
