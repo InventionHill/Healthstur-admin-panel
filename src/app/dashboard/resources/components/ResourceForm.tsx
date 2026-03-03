@@ -256,7 +256,7 @@ export default function ResourceForm({ id }: ResourceFormProps) {
                 ...formData,
             };
 
-            console.log('Sending payload:', JSON.stringify(payload.steps, null, 2));
+
 
             if (isEditing) {
                 await axios.put(`/resource/${id}`, payload);
