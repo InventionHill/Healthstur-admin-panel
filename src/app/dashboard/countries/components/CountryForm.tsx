@@ -10,6 +10,25 @@ interface CountryFormProps {
     countryId?: string; // If provided, we're in edit mode
 }
 
+const COMMON_CURRENCIES = [
+    { code: 'USD', name: 'US Dollar', symbol: '$' },
+    { code: 'EUR', name: 'Euro', symbol: '€' },
+    { code: 'GBP', name: 'British Pound', symbol: '£' },
+    { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
+    { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
+    { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
+    { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$' },
+    { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ' },
+    { code: 'NZD', name: 'New Zealand Dollar', symbol: 'NZ$' },
+    { code: 'ZAR', name: 'South African Rand', symbol: 'R' },
+    { code: 'TRY', name: 'Turkish Lira', symbol: '₺' },
+    { code: 'MYR', name: 'Malaysian Ringgit', symbol: 'RM' },
+    { code: 'BRL', name: 'Brazilian Real', symbol: 'R$' },
+    { code: 'CNY', name: 'Chinese Yuan', symbol: '¥' },
+    { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
+    { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF' },
+];
+
 export default function CountryForm({ countryId }: CountryFormProps) {
     const router = useRouter();
     const isEditMode = !!countryId;
@@ -155,13 +174,26 @@ export default function CountryForm({ countryId }: CountryFormProps) {
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Currency Code
                         </label>
-                        <input
-                            type="text"
+                        <select
                             value={formData.currencyCode}
-                            onChange={(e) => setFormData(prev => ({ ...prev, currencyCode: e.target.value }))}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#023051] focus:border-transparent text-gray-900"
-                            placeholder="e.g. AUD"
-                        />
+                            onChange={(e) => {
+                                const selectedCurrency = COMMON_CURRENCIES.find(c => c.code === e.target.value);
+                                setFormData(prev => ({
+                                    ...prev,
+                                    currencyCode: e.target.value,
+                                    // Optionally auto-update the symbol if it's empty or matches a known one
+                                    ...(selectedCurrency && !prev.currencySymbol ? { currencySymbol: selectedCurrency.symbol } : {})
+                                }));
+                            }}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#023051] focus:border-transparent text-gray-900 bg-white"
+                        >
+                            <option value="">Select a currency...</option>
+                            {COMMON_CURRENCIES.map(currency => (
+                                <option key={currency.code} value={currency.code}>
+                                    {currency.code} - {currency.name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div>
