@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from '@/lib/axios';
-import { Upload, X, ArrowLeft } from 'lucide-react';
+import { Upload, X, ArrowLeft, Search, Check } from 'lucide-react';
 import Image from 'next/image';
+import { COUNTRIES, type CountryData } from '@/lib/countries';
+import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions, Transition } from '@headlessui/react';
 
 interface CountryFormProps {
     countryId?: string; // If provided, we're in edit mode
@@ -45,6 +47,24 @@ export default function CountryForm({ countryId }: CountryFormProps) {
         flag: '',
         isActive: true,
     });
+    const [query, setQuery] = useState('');
+
+    const filteredCountries = query === ''
+        ? COUNTRIES
+        : COUNTRIES.filter((country) =>
+            country.name.toLowerCase().replace(/\s+/g, '').includes(query.toLowerCase().replace(/\s+/g, ''))
+        );
+
+    const handleCountrySelect = (country: CountryData | null) => {
+        if (!country) return;
+        setFormData(prev => ({
+            ...prev,
+            name: country.name,
+            currencyCode: country.currencyCode,
+            currencySymbol: country.currencySymbol,
+            flag: `https://flagcdn.com/w160/${country.code}.png`
+        }));
+    };
 
     useEffect(() => {
         if (isEditMode) {
@@ -157,6 +177,78 @@ export default function CountryForm({ countryId }: CountryFormProps) {
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Search & Select Country
+                        </label>
+                        <Combobox value={null as CountryData | null} onChange={handleCountrySelect}>
+                            <div className="relative mt-1">
+                                <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border border-gray-300 focus-within:ring-2 focus-within:ring-[#023051] focus-within:border-transparent">
+                                    <ComboboxInput
+                                        className="w-full border-none py-2 pl-10 pr-4 text-sm leading-5 text-gray-900 focus:ring-0 outline-none"
+                                        displayValue={() => ''}
+                                        onChange={(event) => setQuery(event.target.value)}
+                                        placeholder="Type to search countries..."
+                                    />
+                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <Search className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                                    </div>
+                                </div>
+                                <Transition
+                                    leave="transition ease-in duration-100"
+                                    leaveFrom="opacity-100"
+                                    leaveTo="opacity-0"
+                                    afterLeave={() => setQuery('')}
+                                >
+                                    <ComboboxOptions className="absolute mt-1 max-height-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm z-50 max-h-60">
+                                        {filteredCountries.length === 0 && query !== '' ? (
+                                            <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                                                Nothing found.
+                                            </div>
+                                        ) : (
+                                            filteredCountries.slice(0, 50).map((country) => (
+                                                <ComboboxOption
+                                                    key={country.code}
+                                                    className={({ active }) =>
+                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-[#023051] text-white' : 'text-gray-900'
+                                                        }`
+                                                    }
+                                                    value={country}
+                                                >
+                                                    {({ selected, active }) => (
+                                                        <>
+                                                            <div className="flex items-center gap-3">
+                                                                <img
+                                                                    src={`https://flagcdn.com/w40/${country.code}.png`}
+                                                                    alt={country.name}
+                                                                    className="w-6 h-4 object-cover rounded-sm"
+                                                                />
+                                                                <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                                                                    {country.name}
+                                                                </span>
+                                                            </div>
+                                                            {selected ? (
+                                                                <span
+                                                                    className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? 'text-white' : 'text-[#023051]'
+                                                                        }`}
+                                                                >
+                                                                    <Check className="h-4 w-4" aria-hidden="true" />
+                                                                </span>
+                                                            ) : null}
+                                                        </>
+                                                    )}
+                                                </ComboboxOption>
+                                            ))
+                                        )}
+                                    </ComboboxOptions>
+                                </Transition>
+                            </div>
+                        </Combobox>
+                        <p className="mt-1 text-xs text-gray-500">
+                            Selecting a country will automatically fill the name, currency, and flag.
+                        </p>
+                    </div>
+
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Country Name
@@ -231,7 +323,7 @@ export default function CountryForm({ countryId }: CountryFormProps) {
                     {formData.flag ? (
                         <div className="relative inline-block border rounded-lg p-2 bg-gray-50">
                             <Image
-                                src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}`.replace(/\/api$/, '') + formData.flag}
+                                src={formData.flag.startsWith('http') ? formData.flag : (`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}`.replace(/\/api$/, '') + formData.flag)}
                                 alt="Flag Preview"
                                 width={80}
                                 height={80}
