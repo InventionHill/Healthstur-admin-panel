@@ -325,7 +325,7 @@ export default function SettingsPage() {
                                     {formData.founderImage && (
                                         <div className="relative w-16 h-16 rounded-full overflow-hidden border border-gray-100 shadow-sm bg-gray-50 flex-shrink-0">
                                             <img
-                                                src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${formData.founderImage}`}
+                                                src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${formData.founderImage}`}
                                                 alt="Founder Preview"
                                                 className="w-full h-full object-cover"
                                             />
