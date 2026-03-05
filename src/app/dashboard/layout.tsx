@@ -56,6 +56,7 @@ export default function DashboardLayout({
 
     const navItems = [
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+        { name: 'Company Settings', href: '/dashboard/settings', icon: Settings },
         { name: 'Programs', href: '/dashboard/programs', icon: Layers },
         { name: 'Resources', href: '/dashboard/resources', icon: BookOpen },
         { name: 'Community Stories', href: '/dashboard/testimonials', icon: Star },
@@ -72,7 +73,6 @@ export default function DashboardLayout({
         { name: 'Refund Policy', href: '/dashboard/refund-policy', icon: ShieldCheck },
         { name: 'Privacy Policy', href: '/dashboard/privacy-policy', icon: Lock },
         { name: 'Terms & Conditions', href: '/dashboard/terms-policy', icon: FileText },
-        { name: 'Company Settings', href: '/dashboard/settings', icon: Settings },
     ];
 
     return (

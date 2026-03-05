@@ -111,7 +111,7 @@ export default function CountryList() {
                                         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 relative">
                                             {country.flag && (
                                                 <Image
-                                                    src={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}`.replace(/\/api$/, '') + country.flag}
+                                                    src={country.flag.startsWith('http') ? country.flag : (`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}`.replace(/\/api$/, '') + country.flag)}
                                                     alt={country.name}
                                                     width={40}
                                                     height={40}

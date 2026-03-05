@@ -162,6 +162,17 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
         if (!formData.solutionsSubtext.trim()) return setApiError('Solutions Section Subtext is required.');
         if (solutionsList.length === 0) return setApiError('At least one Program Solution is required. Please add a solution in the Program Solutions tab.');
 
+        // Curated Track Validation
+        if (formData.isCurated) {
+            if (!formData.curatedTitle?.trim()) return setApiError('Curated Track Title is required.');
+            if (!formData.curatedLinkText?.trim()) return setApiError('Curated Track Link Text is required.');
+            if (!formData.curatedDescription?.trim()) return setApiError('Curated Track Description is required.');
+            if (!formData.curatedImage) return setApiError('Curated Track Background Image is required. Please upload an image.');
+            if (!formData.curatedIcon) return setApiError('Curated Track Icon is required.');
+            if (!formData.curatedIconWidth || isNaN(Number(formData.curatedIconWidth))) return setApiError('Curated Track Icon Width must be a valid number.');
+            if (!formData.curatedIconHeight || isNaN(Number(formData.curatedIconHeight))) return setApiError('Curated Track Icon Height must be a valid number.');
+        }
+
         try {
             let parsedSubItems = [];
             try { parsedSubItems = JSON.parse(formData.subItems); } catch { /* ignore */ }
