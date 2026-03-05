@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import axios from '@/lib/axios';
-import { Save, Loader2, AlertCircle } from 'lucide-react';
+import { Save, Loader2, AlertCircle, Trash2, Upload } from 'lucide-react';
 
 export default function SettingsPage() {
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [isUploadingFounderImage, setIsUploadingFounderImage] = useState(false);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -20,6 +21,10 @@ export default function SettingsPage() {
         youtubeUrl: '',
         mapUrl: '',
         workingHours: '',
+        founderQuote: '',
+        founderName: '',
+        founderDesignation: '',
+        founderImage: '',
     });
 
     useEffect(() => {
@@ -37,6 +42,10 @@ export default function SettingsPage() {
                     youtubeUrl: data.youtubeUrl || '',
                     mapUrl: data.mapUrl || '',
                     workingHours: data.workingHours || '',
+                    founderQuote: data.founderQuote || '',
+                    founderName: data.founderName || '',
+                    founderDesignation: data.founderDesignation || '',
+                    founderImage: data.founderImage || '',
                 });
             } catch (error) {
                 console.error('Failed to fetch Company Info:', error);
@@ -65,6 +74,28 @@ export default function SettingsPage() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleFounderImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setIsUploadingFounderImage(true);
+            const data = new FormData();
+            data.append('file', file);
+
+            const res = await axios.post('/company-info/upload', data, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            setFormData(prev => ({ ...prev, founderImage: res.data.url }));
+        } catch (error) {
+            console.error('Error uploading image', error);
+            setError('Error uploading image');
+        } finally {
+            setIsUploadingFounderImage(false);
         }
     };
 
@@ -98,8 +129,8 @@ export default function SettingsPage() {
                         </div>
                     </div>
                 )}
-                <form onSubmit={handleSubmit} className="space-y-8">
 
+                <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Contact Details Section */}
                     <div>
                         <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Contact Details</h3>
@@ -230,6 +261,84 @@ export default function SettingsPage() {
                                 <p className="text-xs text-gray-500 mt-1">
                                     Go to Google Maps &gt; Share &gt; Embed a map &gt; Copy HTML. Extract the `src` link and paste it here. Leave empty to hide the map.
                                 </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Founder Quote Section */}
+                    <div>
+                        <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Founder Quote Section</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="md:col-span-2">
+                                <label htmlFor="founderQuote" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Founder's Quote
+                                </label>
+                                <textarea
+                                    id="founderQuote"
+                                    rows={3}
+                                    value={formData.founderQuote}
+                                    onChange={(e) => setFormData({ ...formData, founderQuote: e.target.value })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white placeholder:text-gray-400 focus:ring-2 focus:ring-[#023051] focus:border-[#023051] outline-none transition-colors"
+                                    placeholder="Enter the founder's quote here"
+                                ></textarea>
+                            </div>
+                            <div>
+                                <label htmlFor="founderName" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Founder's Name
+                                </label>
+                                <input
+                                    type="text"
+                                    id="founderName"
+                                    value={formData.founderName}
+                                    onChange={(e) => setFormData({ ...formData, founderName: e.target.value })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white placeholder:text-gray-400 focus:ring-2 focus:ring-[#023051] focus:border-[#023051] outline-none transition-colors"
+                                    placeholder="e.g., Atit Mehta"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="founderDesignation" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Founder's Designation
+                                </label>
+                                <input
+                                    type="text"
+                                    id="founderDesignation"
+                                    value={formData.founderDesignation}
+                                    onChange={(e) => setFormData({ ...formData, founderDesignation: e.target.value })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 bg-white placeholder:text-gray-400 focus:ring-2 focus:ring-[#023051] focus:border-[#023051] outline-none transition-colors"
+                                    placeholder="e.g., Founder & Chief Healthstur"
+                                />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Founder's Image</label>
+                                <div className="flex items-center gap-4">
+                                    <label className="flex items-center justify-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-[#023051] rounded-lg cursor-pointer transition-colors border border-gray-300 shadow-sm text-sm font-medium">
+                                        <Upload className="w-4 h-4 mr-2" />
+                                        {isUploadingFounderImage ? 'Uploading...' : 'Upload Image'}
+                                        <input
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            onChange={handleFounderImageUpload}
+                                            disabled={isUploadingFounderImage}
+                                        />
+                                    </label>
+                                    {formData.founderImage && (
+                                        <div className="relative w-16 h-16 rounded-full overflow-hidden border border-gray-100 shadow-sm bg-gray-50 flex-shrink-0">
+                                            <img
+                                                src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}${formData.founderImage}`}
+                                                alt="Founder Preview"
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData(prev => ({ ...prev, founderImage: '' }))}
+                                                className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
