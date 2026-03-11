@@ -6,6 +6,11 @@ export const COMMON_ICONS = [
   'Activity', 'Accessibility', 'PersonStanding', 'Footprints', 'Fingerprint', 'Hand',
   'HandMetal', 'HandHeart',
 
+  // Business & Corporate
+  'Briefcase', 'Building', 'Building2', 'Store', 'Factory', 'Suitcase',
+  'Presentation', 'Wallet',
+  'CreditCard', 'Banknote', 'Coins',
+
   // Gym & Fitness & Sports
   'Dumbbell', 'BicepsFlexed', 'Flame', 'FlameKindling', 'Target', 'Trophy', 'Medal',
   'Award', 'Timer', 'Stopwatch', 'Clock', 'Goal', 'Weight', 'Scale', 'Ruler', 'Swords',
@@ -26,7 +31,9 @@ export const COMMON_ICONS = [
   // Wellness, Lifestyle, Rest
   'Smile', 'SmilePlus', 'Laugh', 'Zap', 'Sparkles', 'BatteryCharging', 'BatteryFull',
   'Battery', 'Music', 'Headphones', 'Radio', 'Book', 'BookOpen', 'GraduationCap',
-  'Users', 'User', 'UserCheck', 'UserPlus', 'Bed', 'BedDouble', 'BedSingle', 'Bath',
+  'Users', 'User', 'UserCheck', 'UserPlus', 'UserRound', 'UsersRound',
+  'Contact', 'ContactRound', 'BriefcaseBusiness',
+  'Bed', 'BedDouble', 'BedSingle', 'Bath',
   'ShowerHead', 'Spade', 'Palmtree',
 
   // Progress, Stats, Tracking
