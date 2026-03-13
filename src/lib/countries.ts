@@ -7,13 +7,19 @@ export interface CountryData {
 
 export const COUNTRIES: CountryData[] = [
     {
+        "name": "Europe",
+        "code": "eu",
+        "currencyCode": "EUR",
+        "currencySymbol": "€"
+    },
+    {
         "name": "Andorra",
         "code": "ad",
         "currencyCode": "EUR",
         "currencySymbol": "€"
     },
     {
-        "name": "United Arab Emirates",
+        "name": "United Arab Emirates (UAE)",
         "code": "ae",
         "currencyCode": "AED",
         "currencySymbol": "د.إ"
@@ -463,7 +469,7 @@ export const COUNTRIES: CountryData[] = [
         "currencySymbol": "FCFA"
     },
     {
-        "name": "United Kingdom",
+        "name": "United Kingdom (UK)",
         "code": "gb",
         "currencyCode": "GBP",
         "currencySymbol": "£"
@@ -1393,7 +1399,7 @@ export const COUNTRIES: CountryData[] = [
         "currencySymbol": "$"
     },
     {
-        "name": "United States",
+        "name": "United States (USA)",
         "code": "us",
         "currencyCode": "USD",
         "currencySymbol": "$"
