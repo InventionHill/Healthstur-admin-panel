@@ -106,7 +106,6 @@ export default function PlanForm({ id }: PlanFormProps) {
     const [isActive, setIsActive] = useState(true);
     const [features, setFeatures] = useState<string[]>(['']);
     const [support, setSupport] = useState<string[]>(['']);
-    const [positioning, setPositioning] = useState<string[]>(['']);
     const [errors, setErrors] = useState<{ price?: string; image?: string;[key: string]: string | undefined }>({});
 
     const [loading, setLoading] = useState(false);
@@ -158,7 +157,6 @@ export default function PlanForm({ id }: PlanFormProps) {
                     setIsActive(data.isActive);
                     setFeatures(data.features?.length ? data.features : ['']);
                     setSupport(data.support?.length ? data.support : ['']);
-                    setPositioning(data.positioning?.length ? data.positioning : ['']);
                 }
             } catch (error) {
                 console.error('Failed to load initial data:', error);
@@ -235,12 +233,6 @@ export default function PlanForm({ id }: PlanFormProps) {
         if (validSupport.length === 0) {
             newErrors.support = 'At least one Support Level is required';
         }
-
-        const validPositioning = positioning.filter(p => p.trim() !== '');
-        if (validPositioning.length === 0) {
-            newErrors.positioning = 'At least one Positioning (Benefit) is required';
-        }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -267,8 +259,7 @@ export default function PlanForm({ id }: PlanFormProps) {
             highlighted,
             isActive,
             features: features.filter(f => f.trim() !== ''),
-            support: support.filter(s => s.trim() !== ''),
-            positioning: positioning.filter(p => p.trim() !== '')
+            support: support.filter(s => s.trim() !== '')
         };
 
         try {
@@ -562,7 +553,7 @@ export default function PlanForm({ id }: PlanFormProps) {
 
                     <div>
                         <h4 className="text-lg font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">Plan Details</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <ArrayInputSection
                                 title="Included Features"
                                 items={features}
@@ -584,17 +575,6 @@ export default function PlanForm({ id }: PlanFormProps) {
                                     if (errors.support) setErrors(prev => ({ ...prev, support: undefined }));
                                 }}
                                 error={errors.support}
-                            />
-                            <ArrayInputSection
-                                title="Positioning (Benefits)"
-                                items={positioning}
-                                onAdd={() => addArrayItem(setPositioning)}
-                                onRemove={(index) => removeArrayItem(setPositioning, index)}
-                                onChange={(index, value) => {
-                                    handleArrayChange(setPositioning, index, value);
-                                    if (errors.positioning) setErrors(prev => ({ ...prev, positioning: undefined }));
-                                }}
-                                error={errors.positioning}
                             />
                         </div>
                     </div>
