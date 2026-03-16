@@ -139,9 +139,10 @@ export default function ApplicationsList() {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${item.paymentStatus === 'SUCCESS' ? 'bg-green-100 text-green-800' :
                                         item.paymentStatus === 'REFUNDED' ? 'bg-orange-100 text-orange-800' :
-                                            'bg-gray-100 text-gray-800'
+                                            item.paymentStatus === 'REFUND_PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                                                'bg-gray-100 text-gray-800'
                                         }`}>
-                                        {item.paymentStatus || 'PENDING'}
+                                        {item.paymentStatus === 'REFUND_PENDING' ? 'REFUND PENDING' : (item.paymentStatus || 'PENDING')}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium sticky right-0 z-10 bg-white group-hover:bg-gray-50 transition-colors shadow-[-12px_0_15px_-3px_rgba(0,0,0,0.05)] space-x-2">
@@ -161,7 +162,7 @@ export default function ApplicationsList() {
                                             </button>
                                         </>
                                     )}
-                                    {item.paymentStatus === 'REFUNDED' && (
+                                    {(item.paymentStatus === 'REFUNDED' || item.paymentStatus === 'REFUND_PENDING') && (
                                         <button
                                             onClick={() => setRefundDetailsToShow(item)}
                                             className="text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-md hover:bg-gray-100 border border-transparent hover:border-gray-200 transition-colors text-xs font-semibold"
