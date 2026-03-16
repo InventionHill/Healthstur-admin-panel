@@ -247,11 +247,14 @@ export default function ApplicationsList() {
                                     {refundDetailsToShow.refundDetails?.refund_status || 'Unknown'}
                                 </span>
                             </div>
-                            {refundDetailsToShow.refundDetails?.notes && (
-                                <div className="pt-2 text-xs text-center text-gray-400">
-                                    Funds will reflect in the customer's account based on the processing speed.
-                                </div>
-                            )}
+                            <details className="mt-4 pt-4 border-t border-gray-100">
+                                <summary className="cursor-pointer text-xs text-gray-400 hover:text-gray-600 font-medium select-none">
+                                    Show Technical Details (JSON)
+                                </summary>
+                                <pre className="mt-2 p-3 bg-gray-50 rounded text-[10px] font-mono text-gray-600 overflow-auto max-h-40 border border-gray-100">
+                                    {JSON.stringify(refundDetailsToShow.refundDetails, null, 2)}
+                                </pre>
+                            </details>
                         </div>
                         <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
                             <button
