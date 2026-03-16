@@ -22,7 +22,7 @@ export default function LoginPage() {
 
             const { accessToken, user } = res.data;
 
-            // Store in localStorage
+            // Store in LocalStorage
             localStorage.setItem('admin_access_token', accessToken);
             localStorage.setItem('admin_user', JSON.stringify(user));
 
