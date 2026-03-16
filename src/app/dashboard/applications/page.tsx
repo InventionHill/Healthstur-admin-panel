@@ -16,9 +16,9 @@ interface Application {
     goal: string;
     selectedProgram?: string;
     paymentStatus?: string;
-    razorpayOrderId?: string;
-    razorpayPaymentId?: string;
-    razorpayRefundId?: string;
+    cashfreeOrderId?: string;
+    cashfreePaymentId?: string;
+    cashfreeRefundId?: string;
     refundDetails?: any;
     amount?: string;
     currency?: string;
@@ -74,7 +74,7 @@ export default function ApplicationsList() {
             }
         } catch (error: any) {
             console.error('Failed to process refund:', error);
-            alert(`Refund Failed: ${error.response?.data?.message || 'Please check Razorpay Dashboard.'}`);
+            alert(`Refund Failed: ${error.response?.data?.message || 'Please check Cashfree Dashboard.'}`);
             setItemToRefund(null);
         } finally {
             setIsRefunding(false);
@@ -203,7 +203,7 @@ export default function ApplicationsList() {
                 onClose={() => setItemToRefund(null)}
                 onConfirm={confirmRefund}
                 title="Refund Payment"
-                message="Are you sure you want to refund this application? The funds will be returned to the customer's original payment method via Razorpay within 5-7 business days. This action cannot be undone."
+                message="Are you sure you want to refund this application? The funds will be returned to the customer's original payment method via Cashfree within 5-7 business days. This action cannot be undone."
                 confirmText="Process Refund"
                 isLoading={isRefunding}
             />
@@ -228,22 +228,22 @@ export default function ApplicationsList() {
                             </div>
                             <div className="flex justify-between items-center border-b pb-2">
                                 <span className="font-medium text-gray-500">Refund ID:</span>
-                                <span className="text-gray-900 font-mono text-xs">{refundDetailsToShow.razorpayRefundId || 'N/A'}</span>
+                                <span className="text-gray-900 font-mono text-xs">{refundDetailsToShow.cashfreeRefundId || 'N/A'}</span>
                             </div>
                             <div className="flex justify-between items-center border-b pb-2">
                                 <span className="font-medium text-gray-500">Refund Amount:</span>
                                 <span className="text-gray-900 font-semibold cursor-help" title="Amounts shown in minimal currency units if extracted directly from the payload.">
-                                    {refundDetailsToShow.refundDetails?.currency || ''} {refundDetailsToShow.refundDetails?.amount ? (refundDetailsToShow.refundDetails.amount / 100).toFixed(2) : '---'}
+                                    {refundDetailsToShow.refundDetails?.refund_currency || ''} {refundDetailsToShow.refundDetails?.refund_amount ? Number(refundDetailsToShow.refundDetails.refund_amount).toFixed(2) : '---'}
                                 </span>
                             </div>
                             <div className="flex justify-between items-center border-b pb-2">
                                 <span className="font-medium text-gray-500">Original Payment ID:</span>
-                                <span className="text-gray-900 font-mono text-xs">{refundDetailsToShow.refundDetails?.payment_id || 'N/A'}</span>
+                                <span className="text-gray-900 font-mono text-xs">{refundDetailsToShow.refundDetails?.cf_payment_id || 'N/A'}</span>
                             </div>
                             <div className="flex justify-between items-center border-b pb-2">
                                 <span className="font-medium text-gray-500">Refund Status:</span>
-                                <span className={`font-semibold capitalize ${refundDetailsToShow.refundDetails?.status === 'processed' ? 'text-green-600' : 'text-orange-600'}`}>
-                                    {refundDetailsToShow.refundDetails?.status || 'Unknown'}
+                                <span className={`font-semibold capitalize ${refundDetailsToShow.refundDetails?.refund_status === 'SUCCESS' ? 'text-green-600' : 'text-orange-600'}`}>
+                                    {refundDetailsToShow.refundDetails?.refund_status || 'Unknown'}
                                 </span>
                             </div>
                             {refundDetailsToShow.refundDetails?.notes && (
@@ -295,12 +295,12 @@ export default function ApplicationsList() {
                                 </span>
                             </div>
                             <div className="flex justify-between items-center border-b pb-2">
-                                <span className="font-medium text-gray-500">Order ID (Razorpay):</span>
-                                <span className="text-gray-900 font-mono text-xs">{paymentDetailsToShow.razorpayOrderId || 'N/A'}</span>
+                                <span className="font-medium text-gray-500">Order ID (Cashfree):</span>
+                                <span className="text-gray-900 font-mono text-xs">{paymentDetailsToShow.cashfreeOrderId || 'N/A'}</span>
                             </div>
                             <div className="flex justify-between items-center border-b pb-2">
-                                <span className="font-medium text-gray-500">Payment ID (Razorpay):</span>
-                                <span className="text-gray-900 font-mono text-xs">{paymentDetailsToShow.razorpayPaymentId || 'N/A'}</span>
+                                <span className="font-medium text-gray-500">Payment ID (Cashfree):</span>
+                                <span className="text-gray-900 font-mono text-xs">{paymentDetailsToShow.cashfreePaymentId || 'N/A'}</span>
                             </div>
                         </div>
                         <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
