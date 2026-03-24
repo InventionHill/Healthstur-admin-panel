@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from '@/lib/axios';
 import { Save, Loader2, Upload, Plus, Trash2, GripVertical, AlertCircle } from 'lucide-react';
+import { getImageUrl } from '@/utils/image.util';
 
 interface ResourceFormProps {
     id?: string;
@@ -403,11 +404,7 @@ export default function ResourceForm({ id }: ResourceFormProps) {
                                     </label>
                                     {formData.heroImage ? (
                                         <div className="w-48 aspect-video rounded-lg bg-gray-100 border border-gray-300 flex items-center justify-center overflow-hidden">
-                                            {formData.heroImage.startsWith('http') ? (
-                                                <img src={formData.heroImage} alt="Preview" className="w-full h-full object-cover" />
-                                            ) : (
-                                                <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${formData.heroImage}`} alt="Preview" className="w-full h-full object-cover" />
-                                            )}
+                                            <img src={getImageUrl(formData.heroImage)} alt="Preview" className="w-full h-full object-cover" />
                                         </div>
                                     ) : (
                                         <p className="text-sm text-gray-500 mt-2">No image uploaded. Will use default.</p>
@@ -552,11 +549,7 @@ export default function ResourceForm({ id }: ResourceFormProps) {
                                                         </label>
                                                         {step.image && (
                                                             <div className="h-8 w-8 rounded bg-gray-200 overflow-hidden border border-gray-300">
-                                                                {step.image.startsWith('http') ? (
-                                                                    <img src={step.image} alt="Preview" className="w-full h-full object-cover" />
-                                                                ) : (
-                                                                    <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${step.image}`} alt="Preview" className="w-full h-full object-cover" />
-                                                                )}
+                                                                <img src={getImageUrl(step.image)} alt="Preview" className="w-full h-full object-cover" />
                                                             </div>
                                                         )}
                                                     </div>

@@ -8,6 +8,7 @@ import axios from '@/lib/axios';
 import { DynamicIcon } from '@/components/DynamicIcon';
 import * as LucideIcons from 'lucide-react';
 import { COMMON_ICONS } from '@/lib/constants';
+import { getImageUrl } from '@/utils/image.util';
 
 interface PlanFormProps {
     id?: string;
@@ -504,10 +505,7 @@ export default function PlanForm({ id }: PlanFormProps) {
                                 {image && (
                                     <div className="h-10 w-14 rounded-lg overflow-hidden border border-gray-200 shadow-sm bg-gray-50 shrink-0">
                                         <img
-                                            src={image.startsWith('http')
-                                                ? image
-                                                : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${image.startsWith('/') ? '' : '/'}${image}`
-                                            }
+                                            src={getImageUrl(image)}
                                             alt="Preview"
                                             className="w-full h-full object-cover"
                                         />

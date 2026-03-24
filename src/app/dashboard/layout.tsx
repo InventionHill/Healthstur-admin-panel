@@ -81,7 +81,7 @@ export default function DashboardLayout({
             <aside className={`hidden md:flex flex-col bg-primary border-r border-primary-hover fixed h-full z-10 transition-all duration-300 ${isDesktopCollapsed ? 'w-20' : 'w-64'}`}>
                 <div className={`h-16 flex items-center bg-primary border-b border-white/5 overflow-hidden ${isDesktopCollapsed ? 'justify-center px-0' : 'justify-between px-6'}`}>
                     <div className="flex items-center overflow-hidden whitespace-nowrap">
-                        {!isDesktopCollapsed && <Activity className="h-6 w-6 text-white flex-shrink-0 mr-3" />}
+                        {!isDesktopCollapsed && <img src="/Healthstur_Logo.svg" alt="Healthstur Logo" className="h-10 w-auto flex-shrink-0" />}
                         {!isDesktopCollapsed && (
                             <div className="text-xl tracking-tight transition-opacity duration-300">
                                 <span className="font-extrabold text-white">Healthstur</span>
