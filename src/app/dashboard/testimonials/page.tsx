@@ -6,6 +6,7 @@ import { Plus, Edit2, Trash2, GripVertical, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import axios from '@/lib/axios';
 import ConfirmDialog from '@/components/ConfirmDialog';
+import { getImageUrl } from '@/utils/image.util';
 
 interface Testimonial {
     id: string;
@@ -174,7 +175,7 @@ export default function TestimonialList() {
                                     <div className="flex items-center">
                                         {testimonial.image ? (
                                             <div className="h-10 w-10 flex-shrink-0 mr-3">
-                                                <img className="h-10 w-10 rounded-full object-cover border border-gray-200" src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${testimonial.image}`} alt={testimonial.name} />
+                                                <img className="h-10 w-10 rounded-full object-cover border border-gray-200" src={getImageUrl(testimonial.image)} alt={testimonial.name} />
                                             </div>
                                         ) : (
                                             <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mr-3 text-gray-500">

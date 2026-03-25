@@ -7,6 +7,7 @@ import { DynamicIcon } from '@/components/DynamicIcon';
 import axios from '@/lib/axios';
 import { useRouter } from 'next/navigation';
 import { COMMON_ICONS } from '@/lib/constants';
+import { getImageUrl } from '@/utils/image.util';
 
 
 
@@ -512,7 +513,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                             </label>
                             {formData.homeBackground && (
                                 <div className="w-16 h-12 rounded overflow-hidden border border-gray-300 shadow-sm">
-                                    <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${formData.homeBackground}`} alt="Preview" className="w-full h-full object-cover" />
+                                    <img src={getImageUrl(formData.homeBackground)} alt="Preview" className="w-full h-full object-cover" />
                                 </div>
                             )}
                         </div>
@@ -611,7 +612,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                             </label>
                             {formData.background && (
                                 <div className="w-16 h-12 rounded overflow-hidden border border-gray-300 shadow-sm">
-                                    <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${formData.background}`} alt="Preview" className="w-full h-full object-cover" />
+                                    <img src={getImageUrl(formData.background)} alt="Preview" className="w-full h-full object-cover" />
                                 </div>
                             )}
                         </div>
@@ -819,7 +820,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                                             </label>
                                             {currentSolution.image && (
                                                 <div className="w-12 h-16 rounded overflow-hidden border border-gray-200">
-                                                    <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${currentSolution.image}`} alt="Preview" className="w-full h-full object-cover" />
+                                                    <img src={getImageUrl(currentSolution.image)} alt="Preview" className="w-full h-full object-cover" />
                                                 </div>
                                             )}
                                         </div>
@@ -889,7 +890,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                                         </div>
                                         {sol.image && (
                                             <div className="w-16 h-20 flex-shrink-0 bg-gray-100 rounded overflow-hidden shadow-sm">
-                                                <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${sol.image}`} className="w-full h-full object-cover" alt="" />
+                                                <img src={getImageUrl(sol.image)} className="w-full h-full object-cover" alt="" />
                                             </div>
                                         )}
                                         <div className="flex-1 min-w-0">
@@ -966,7 +967,7 @@ export default function ProgramForm({ initialData }: { initialData?: Program }) 
                                     </label>
                                     {formData.curatedImage && (
                                         <div className="w-16 h-20 rounded overflow-hidden border border-gray-300 shadow-sm flex-shrink-0">
-                                            <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${formData.curatedImage}`} alt="Preview" className="w-full h-full object-cover" />
+                                            <img src={getImageUrl(formData.curatedImage)} alt="Preview" className="w-full h-full object-cover" />
                                         </div>
                                     )}
                                 </div>

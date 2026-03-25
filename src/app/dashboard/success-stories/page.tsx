@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Plus, Edit2, Trash2, GripVertical } from 'lucide-react';
 import axios from '@/lib/axios';
 import ConfirmDialog from '@/components/ConfirmDialog';
+import { getImageUrl } from '@/utils/image.util';
 
 interface Category {
     id: string;
@@ -176,7 +177,7 @@ export default function SuccessStoriesList() {
                                     <div className="h-10 w-10 bg-gray-100 rounded-full overflow-hidden border border-gray-200">
                                         {story.image ? (
                                             <img
-                                                src={story.image.startsWith('http') ? story.image : `${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${story.image}`}
+                                                src={getImageUrl(story.image)}
                                                 alt={story.name}
                                                 className="w-full h-full object-cover"
                                             />

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from '@/lib/axios';
 import { Save, Loader2, Upload, AlertCircle, Plus, Trash2 } from 'lucide-react';
+import { getImageUrl } from '@/utils/image.util';
 
 interface StoryFormProps {
     id?: string;
@@ -201,11 +202,7 @@ export default function StoryForm({ id }: StoryFormProps) {
                                 </label>
                                 {formData.image && (
                                     <div className="h-16 w-16 bg-gray-100 border border-gray-300 flex items-center justify-center overflow-hidden rounded-md">
-                                        {formData.image.startsWith('http') ? (
-                                            <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${formData.image}`} alt="Preview" className="w-full h-full object-cover" />
-                                        )}
+                                        <img src={getImageUrl(formData.image)} alt="Preview" className="w-full h-full object-cover" />
                                     </div>
                                 )}
                             </div>

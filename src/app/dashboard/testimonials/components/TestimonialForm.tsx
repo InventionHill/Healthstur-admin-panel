@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from '@/lib/axios';
 import { Save, Loader2, Upload, AlertCircle } from 'lucide-react';
+import { getImageUrl } from '@/utils/image.util';
 
 interface TestimonialFormProps {
     id?: string;
@@ -163,7 +164,7 @@ export default function TestimonialForm({ id }: TestimonialFormProps) {
                                         {formData.image.startsWith('http') ? (
                                             <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
                                         ) : (
-                                            <img src={`${(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api').replace(/\/api$/, '')}${formData.image}`} alt="Preview" className="w-full h-full object-cover" />
+                                            <img src={getImageUrl(formData.image)} alt="Preview" className="w-full h-full object-cover" />
                                         )}
                                     </div>
                                 )}
