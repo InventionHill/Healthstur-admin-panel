@@ -70,7 +70,7 @@ export default function DashboardPage() {
     ];
 
     return (
-        <div className="max-w-7xl mx-auto  sm:px-4 lg:px-8  w-full">
+        <div className="mx-auto  w-full">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 font-sans tracking-tight">Dashboard Overview</h1>
